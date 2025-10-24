@@ -4,7 +4,6 @@ dotenv.config();
 // Environment variables
 export const PORT = process.env.PORT || 3000;
 export const MONGODB_URI = process.env.MONGODB_URI;
-export const STRIPE_PRIVATE_KEY = process.env.STRIPE_PRIVATE_KEY;
 export const WEB_URL = process.env.WEB_URL;
 export const JWT_SECRET = process.env.JWT_SECRET;
 export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;

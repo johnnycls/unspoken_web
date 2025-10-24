@@ -7,7 +7,7 @@ import { useGetProfileQuery } from "../slices/userSlice";
 import Login from "./Login";
 
 const App: React.FC = () => {
-  const { isError, isLoading, isSuccess } = useGetProfileQuery({});
+  const { isError, isLoading, isSuccess } = useGetProfileQuery();
 
   return (
     <PrimeReactProvider>

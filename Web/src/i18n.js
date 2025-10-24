@@ -26,10 +26,52 @@ i18n
 
     resources: {
       en: {
-        translation: {},
+        translation: {
+          // Common
+          common: {
+            cancel: "Cancel",
+            save: "Save",
+          },
+          // Settings page
+          settings: {
+            title: "Settings",
+            displayName: "Display Name",
+            displayNameLabel: "Enter your display name",
+            displayNamePlaceholder: "Your display name",
+            language: "Language",
+            languageLabel: "Select your preferred language",
+            languagePlaceholder: "Select language",
+            logout: "Logout",
+          },
+          // Profile update messages
+          updateProfileSuccess: "Profile updated successfully",
+          updateProfileError: "Failed to update profile",
+          fetchProfileError: "Failed to load profile",
+        },
       },
       zh: {
-        translation: {},
+        translation: {
+          // Common
+          common: {
+            cancel: "取消",
+            save: "儲存",
+          },
+          // Settings page
+          settings: {
+            title: "設定",
+            displayName: "顯示名稱",
+            displayNameLabel: "輸入你的顯示名稱",
+            displayNamePlaceholder: "你的顯示名稱",
+            language: "語言",
+            languageLabel: "選擇你的偏好語言",
+            languagePlaceholder: "選擇語言",
+            logout: "登出",
+          },
+          // Profile update messages
+          updateProfileSuccess: "個人資料更新成功",
+          updateProfileError: "個人資料更新失敗",
+          fetchProfileError: "載入個人資料失敗",
+        },
       },
     },
   });
