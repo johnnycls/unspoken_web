@@ -35,6 +35,7 @@ i18n
           // Settings page
           settings: {
             title: "Settings",
+            email: "Email Address",
             displayName: "Display Name",
             displayNameLabel: "Enter your display name",
             displayNamePlaceholder: "Your display name",
@@ -59,6 +60,7 @@ i18n
           // Settings page
           settings: {
             title: "設定",
+            email: "電子郵件地址",
             displayName: "顯示名稱",
             displayNameLabel: "輸入你的顯示名稱",
             displayNamePlaceholder: "你的顯示名稱",

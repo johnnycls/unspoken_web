@@ -64,6 +64,7 @@ const Content: React.FC<{ profile?: profile }> = ({ profile }) => {
 
       <div className="w-full h-full flex flex-col overflow-y-auto">
         <SettingsList
+          email={profile?.email}
           displayName={profile?.name}
           language={profile?.lang}
           onDisplayNameClick={() => setShowNameDialog(true)}
