@@ -4,7 +4,6 @@ import { StepperPanel } from "primereact/stepperpanel";
 import BasicInformation from "./BasicInformation";
 import { Card } from "primereact/card";
 import { profile } from "../../slices/userSlice";
-import Description from "./Description";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import AppBar from "../../components/AppBar";
@@ -19,7 +18,7 @@ const Content: React.FC<{ profile?: profile }> = ({ profile }) => {
   return (
     <div className="w-full h-full flex flex-col justify-between">
       <AppBar>
-        <h1 className="text-3xl">NookioAI</h1>
+        <h1 className="text-3xl">Unspoken</h1>
       </AppBar>
 
       <div className="w-full h-full p-5 flex justify-content-center items-center overflow-y-auto">
@@ -49,17 +48,6 @@ const Content: React.FC<{ profile?: profile }> = ({ profile }) => {
                   stepperRef.current?.prevCallback();
                 }}
                 nextCallback={() => {
-                  stepperRef.current?.nextCallback();
-                }}
-                profile={profile}
-              />
-            </StepperPanel>
-            <StepperPanel header={t("profile.description.title")}>
-              <Description
-                prevCallback={() => {
-                  stepperRef.current?.prevCallback();
-                }}
-                nextCallback={() => {
                   navigate("/");
                 }}
                 profile={profile}
@@ -69,10 +57,7 @@ const Content: React.FC<{ profile?: profile }> = ({ profile }) => {
         </Card>
       </div>
 
-      {profile?.name &&
-        profile?.description &&
-        profile?.gender &&
-        profile?.dob && <BottomTab activeIndex={2} />}
+      {profile?.name && <BottomTab activeIndex={2} />}
     </div>
   );
 };

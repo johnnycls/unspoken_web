@@ -3,6 +3,9 @@ import cors from "cors";
 import InitiateMongoServer from "./db";
 import { PORT, WEB_URL } from "./config";
 import userRouter from "./routes/user";
+import crushRouter from "./routes/crush";
+import letterRouter from "./routes/letter";
+import groupRouter from "./routes/group";
 import { rateLimit } from "express-rate-limit";
 
 const limiter = rateLimit({
@@ -29,6 +32,9 @@ app.use(limiter);
 app.use(express.json({ limit: "100kb" }));
 
 app.use("/user", userRouter);
+app.use("/crush", crushRouter);
+app.use("/letter", letterRouter);
+app.use("/group", groupRouter);
 
 app.use("*path", (req: Request, res: Response, next: NextFunction) => {
   const error = {

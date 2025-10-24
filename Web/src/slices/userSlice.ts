@@ -3,7 +3,6 @@ import { apiSlice } from "./apiSlice";
 import i18next from "i18next";
 
 export type profile = {
-  _id: string;
   email: string;
   name: string;
   lang: string;
@@ -11,13 +10,16 @@ export type profile = {
 
 type profileResponse = profile;
 
-type updateProfileRequest = Partial<Omit<profile, "_id" | "email">>;
+type updateProfileRequest = {
+  name?: string;
+  lang?: string;
+};
 
 const userSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getProfile: builder.query<profileResponse, {}>({
+    getProfile: builder.query<profileResponse, void>({
       query: () => ({
-        url: "user/profile/",
+        url: "user/",
       }),
       transformResponse: (response: profileResponse) => {
         if (response.lang !== "") {
@@ -34,9 +36,9 @@ const userSlice = apiSlice.injectEndpoints({
       },
       providesTags: ["User"],
     }),
-    updateProfile: builder.mutation<void, updateProfileRequest>({
+    updateProfile: builder.mutation<{ message: string }, updateProfileRequest>({
       query: (profileData) => ({
-        url: "user/profile/",
+        url: "user/",
         method: "PATCH",
         body: profileData,
       }),
@@ -47,7 +49,7 @@ const userSlice = apiSlice.injectEndpoints({
           }
         } catch {}
       },
-      invalidatesTags: (result, error, profileData) => ["User"],
+      invalidatesTags: ["User"],
     }),
   }),
   overrideExisting: false,

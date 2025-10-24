@@ -4,12 +4,7 @@ import type { Request, Response } from "express";
 import User from "../models/user.model";
 import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
-import {
-  GOOGLE_CLIENT_ID,
-  JWT_SECRET,
-  DESCRIPTION_LENGTH_LIMIT,
-  NAME_LENGTH_LIMIT,
-} from "../config";
+import { GOOGLE_CLIENT_ID, JWT_SECRET, NAME_LENGTH_LIMIT } from "../config";
 import authMiddleware from "../middlewares/auth";
 
 const router: Router = express.Router();
@@ -68,7 +63,7 @@ router.post("/login", async (req: Request, res: Response) => {
 });
 
 // Get user profile
-router.get("/profile", authMiddleware, async (req: Request, res: Response) => {
+router.get("/", authMiddleware, async (req: Request, res: Response) => {
   try {
     const email = res.locals.email as string;
     const user = await User.findOne({ email });
@@ -78,14 +73,11 @@ router.get("/profile", authMiddleware, async (req: Request, res: Response) => {
       return;
     }
 
-    const profile = {
-      _id: user._id,
+    res.status(200).json({
       email: user.email,
       name: user.name || "",
-      lang: user.lang ?? "",
-    };
-
-    res.status(200).json(profile);
+      lang: user.lang || "",
+    });
   } catch (error) {
     console.error(JSON.stringify(error));
     res
@@ -95,36 +87,32 @@ router.get("/profile", authMiddleware, async (req: Request, res: Response) => {
 });
 
 // Update user profile
-router.patch(
-  "/profile",
-  authMiddleware,
-  async (req: Request, res: Response) => {
-    try {
-      const email = res.locals.email as string;
-      const { name, description, opening, gender, dob, lang } = req.body;
+router.patch("/", authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const email = res.locals.email as string;
+    const { name, lang } = req.body;
 
-      const user = await User.findOne({ email });
-      if (!user) {
-        res.status(404).json({ message: "User not found" });
-        return;
-      }
-
-      // Update basic profile fields
-      if (name !== undefined && name.length <= NAME_LENGTH_LIMIT)
-        user.name = name;
-      if (lang !== undefined) user.lang = lang;
-
-      await user.save();
-
-      res.status(200).json({ message: "Profile updated" });
-    } catch (error) {
-      console.error(JSON.stringify(error));
-      res.status(500).json({
-        message: "Internal server error",
-        error: JSON.stringify(error),
-      });
+    const user = await User.findOne({ email });
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
     }
+
+    // Update basic profile fields
+    if (name !== undefined && name.length <= NAME_LENGTH_LIMIT)
+      user.name = name;
+    if (lang !== undefined) user.lang = lang;
+
+    await user.save();
+
+    res.status(200).json({ message: "Profile updated" });
+  } catch (error) {
+    console.error(JSON.stringify(error));
+    res.status(500).json({
+      message: "Internal server error",
+      error: JSON.stringify(error),
+    });
   }
-);
+});
 
 export default router;

@@ -19,16 +19,3 @@ export function displayDate(date: Date) {
   const formattedDateTime = `${day}/${month}/${year}`;
   return formattedDateTime;
 }
-
-export function isTimeConflict(newDateRange: {startDate: Date, endDate: Date}, existingDateRanges: {startDate: Date, endDate: Date}[]): boolean {
-  for (const existingDateRange of existingDateRanges) {
-    if (
-      (newDateRange.startDate >= existingDateRange.startDate && newDateRange.startDate < existingDateRange.endDate) ||
-      (newDateRange.endDate > existingDateRange.startDate && newDateRange.endDate <= existingDateRange.endDate) ||
-      (newDateRange.startDate <= existingDateRange.startDate && newDateRange.endDate >= existingDateRange.endDate)
-    ) {
-      return true; 
-    }
-  }
-  return false; 
-}
