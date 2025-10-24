@@ -1,0 +1,34 @@
+{
+  "name": "unspoken-server",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon ./src/server.ts",
+    "build": "tsc",
+    "production": "node dist/server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "google-auth-library": "^10.4.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.20.0",
+    "mongoose": "^8.19.2"
+  },
+  "devDependencies": {
+    "@types/connect": "^3.4.38",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.4",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/mime": "^4.0.0",
+    "@types/node": "^24.9.1",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}

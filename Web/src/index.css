@@ -1,0 +1,39 @@
+@import "tailwindcss";
+@import "./assets/theme/theme.css";
+
+html {
+  scrollbar-gutter: stable !important;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100svw;
+  height: 100svh;
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.5),
+      rgba(255, 255, 255, 0.5)
+    ),
+    url("./assets/imgs/BackgroundImage.webp");
+  background-size: cover;
+  background-position: right;
+  background-repeat: no-repeat;
+  will-change: transform;
+}
+
+@media (max-width: 768px) {
+  body {
+    background-position: 75% 0;
+  }
+}
+
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100svw;
+  height: 100svh;
+}
+
+* {
+  box-sizing: border-box;
+}
