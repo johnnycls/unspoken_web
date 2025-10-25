@@ -73,10 +73,9 @@ const GroupForm: React.FC = () => {
     {}
   );
 
-  const allOldEmails = [
-    ...(group?.memberEmails || []),
-    ...(group?.invitedEmails || []),
-  ];
+  const allOldEmails = isEditMode
+    ? [...(group?.memberEmails || []), ...(group?.invitedEmails || [])]
+    : [profile?.email || ""];
   const {
     data: oldUserNames,
     isError: fetchUserNamesError,
@@ -102,6 +101,12 @@ const GroupForm: React.FC = () => {
       setCreatorEmail(group.creatorEmail);
       setMemberEmails(group.memberEmails);
       setInvitedEmails(group.invitedEmails);
+    } else if (!isEditMode) {
+      setName("");
+      setDescription("");
+      setCreatorEmail(profile?.email || "");
+      setMemberEmails([]);
+      setInvitedEmails([]);
     }
   }, [isEditMode, group]);
 
@@ -187,6 +192,13 @@ const GroupForm: React.FC = () => {
         { emails: [trimmedEmail] },
         true
       ).unwrap();
+      if (!payload || !payload[trimmedEmail]) {
+        toast.current?.show({
+          severity: "error",
+          summary: t("memberNotFound"),
+        });
+        return;
+      }
       setNewUserNames((prev) => ({ ...prev, ...payload }));
       setInvitedEmails([...invitedEmails, trimmedEmail]);
       setNewEmail("");
@@ -197,7 +209,7 @@ const GroupForm: React.FC = () => {
     } catch (error) {
       toast.current?.show({
         severity: "error",
-        summary: t("groups.memberNotFound"),
+        summary: t("memberNotFound"),
       });
       return;
     }

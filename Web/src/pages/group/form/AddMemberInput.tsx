@@ -23,13 +23,13 @@ const AddMemberInput: React.FC<AddMemberInputProps> = ({
         onChange={(e) => onChange(e.target.value)}
         placeholder={t("groups.emailPlaceholder")}
         className="flex-1"
-        onKeyPress={(e) => {
+        onKeyDown={(e) => {
           if (e.key === "Enter") {
             onAdd();
           }
         }}
       />
-      <Button label={t("common.add")} icon="pi pi-plus" onClick={onAdd} />
+      <Button icon="pi pi-plus" onClick={onAdd} />
     </div>
   );
 };

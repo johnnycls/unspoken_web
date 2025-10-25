@@ -137,7 +137,9 @@ router.post(
       if (emails.length > MAX_TOTAL_MEMBERS) {
         res
           .status(400)
-          .json({ message: "Too many emails. Maximum 100 allowed" });
+          .json({
+            message: `Too many emails. Maximum ${MAX_TOTAL_MEMBERS} allowed`,
+          });
         return;
       }
 

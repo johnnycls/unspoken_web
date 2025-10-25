@@ -7,6 +7,7 @@ import GroupInfoForm from "./GroupInfoForm";
 import MemberList from "../MemberList";
 import AddMemberInput from "./AddMemberInput";
 import { Group } from "../../../slices/groupSlice";
+import { Card } from "primereact/card";
 
 interface Member {
   email: string;
@@ -63,50 +64,35 @@ const GroupFormContent: React.FC<GroupFormContentProps> = ({
         </h1>
       </AppBar>
 
-      <div className="w-full h-full flex flex-col overflow-y-auto p-4 gap-4">
-        <GroupInfoForm
-          name={name}
-          description={description}
-          onNameChange={onNameChange}
-          onDescriptionChange={onDescriptionChange}
-        />
-        {/* 
-        {isEditMode && group && (
-          <MemberList
-            members={allMembers.filter(
-              (m) => m.role === "creator" || m.role === "member"
-            )}
-            userNames={userNames}
+      <div className="w-full h-full flex overflow-y-auto p-4 justify-center items-center">
+        <Card pt={{ content: { className: "w-full flex flex-col gap-4" } }}>
+          <GroupInfoForm
+            name={name}
+            description={description}
+            onNameChange={onNameChange}
+            onDescriptionChange={onDescriptionChange}
           />
-        )}
-
-        <div className="flex flex-col gap-2">
-          <h3 className="text-lg font-semibold">{t("groups.members")}</h3>
-
-          <AddMemberInput
-            value={newEmail}
-            onChange={onNewEmailChange}
-            onAdd={onAddEmail}
-          />
-
-          {invitedMembers.length > 0 && (
+          <div>
             <MemberList
-              members={invitedMembers}
+              members={allMembers}
               userNames={userNames}
-              showRemoveButtons
+              showRemoveButtons={isEditMode}
               onRemoveMember={onRemoveMember}
             />
-          )}
-        </div> */}
+            <AddMemberInput
+              value={newEmail}
+              onChange={onNewEmailChange}
+              onAdd={onAddEmail}
+            />
+          </div>
 
-        <div className="mt-auto">
           <Button
             label={isEditMode ? t("common.save") : t("groups.create")}
             icon={isEditMode ? "pi pi-check" : "pi pi-plus"}
             className="w-full"
             onClick={onSubmit}
           />
-        </div>
+        </Card>
       </div>
     </div>
   );
