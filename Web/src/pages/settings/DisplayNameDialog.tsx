@@ -43,7 +43,7 @@ const DisplayNameDialog: React.FC<DisplayNameDialogProps> = ({
       style={{ width: "90vw", maxWidth: "400px" }}
     >
       <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col">
           <label htmlFor="displayName" className="text-sm">
             {t("settings.displayNameLabel")}
           </label>
@@ -54,6 +54,7 @@ const DisplayNameDialog: React.FC<DisplayNameDialogProps> = ({
             placeholder={t("settings.displayNamePlaceholder")}
           />
         </div>
+
         <div className="flex gap-2">
           <Button
             label={t("common.cancel")}

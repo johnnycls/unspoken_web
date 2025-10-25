@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { langs } from "../../assets/langs";
+import { Divider } from "primereact/divider";
 
 interface SettingsListProps {
   email?: string;
@@ -26,15 +27,16 @@ const SettingsList: React.FC<SettingsListProps> = ({
 
   return (
     <div className="flex flex-col">
-      <div className="flex justify-between items-center gap-4 p-4 border-b">
+      <div className="flex justify-between items-center gap-4 p-4">
         <span className="flex-shrink-0">{t("settings.email")}</span>
         <span className="text-gray-600 truncate text-right">
           {email || "-"}
         </span>
       </div>
+      <Divider />
 
       <div
-        className="flex justify-between items-center gap-4 p-4 border-b cursor-pointer"
+        className="flex justify-between items-center gap-4 p-4 cursor-pointer"
         onClick={onDisplayNameClick}
       >
         <span className="flex-shrink-0">{t("settings.displayName")}</span>
@@ -43,9 +45,10 @@ const SettingsList: React.FC<SettingsListProps> = ({
           <i className="pi pi-chevron-right text-gray-400 flex-shrink-0"></i>
         </div>
       </div>
+      <Divider />
 
       <div
-        className="flex justify-between items-center gap-4 p-4 border-b cursor-pointer"
+        className="flex justify-between items-center gap-4 p-4 cursor-pointer"
         onClick={onLanguageClick}
       >
         <span className="flex-shrink-0">{t("settings.language")}</span>
@@ -56,6 +59,7 @@ const SettingsList: React.FC<SettingsListProps> = ({
           <i className="pi pi-chevron-right text-gray-400 flex-shrink-0"></i>
         </div>
       </div>
+      <Divider />
     </div>
   );
 };

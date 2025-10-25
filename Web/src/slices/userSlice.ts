@@ -8,20 +8,13 @@ export type profile = {
   lang: string;
 };
 
-type profileResponse = profile;
-
-type updateProfileRequest = {
-  name?: string;
-  lang?: string;
-};
-
 const userSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getProfile: builder.query<profileResponse, void>({
+    getProfile: builder.query<profile, void>({
       query: () => ({
         url: "user/",
       }),
-      transformResponse: (response: profileResponse) => {
+      transformResponse: (response: profile) => {
         if (response.lang !== "") {
           i18next.changeLanguage(response.lang);
           return response;
@@ -36,7 +29,13 @@ const userSlice = apiSlice.injectEndpoints({
       },
       providesTags: ["User"],
     }),
-    updateProfile: builder.mutation<{ message: string }, updateProfileRequest>({
+    updateProfile: builder.mutation<
+      { message: string },
+      {
+        name?: string;
+        lang?: string;
+      }
+    >({
       query: (profileData) => ({
         url: "user/",
         method: "PATCH",
@@ -51,8 +50,24 @@ const userSlice = apiSlice.injectEndpoints({
       },
       invalidatesTags: ["User"],
     }),
+    getUsersByEmails: builder.query<
+      { [key: string]: string },
+      { emails: string[] }
+    >({
+      query: (data) => ({
+        url: "user/get-names",
+        method: "POST",
+        body: data,
+      }),
+      providesTags: ["Users"],
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useGetProfileQuery, useUpdateProfileMutation } = userSlice;
+export const {
+  useGetProfileQuery,
+  useUpdateProfileMutation,
+  useGetUsersByEmailsQuery,
+  useLazyGetUsersByEmailsQuery,
+} = userSlice;

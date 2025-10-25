@@ -4,6 +4,7 @@ export type Group = {
   id: string;
   name: string;
   description: string;
+  creatorEmail: string;
   memberEmails: string[];
   invitedEmails: string[];
 };
@@ -40,6 +41,22 @@ type GroupInvitationResponse = {
   message: string;
 };
 
+type LeaveGroupRequest = {
+  groupId: string;
+};
+
+type LeaveGroupResponse = {
+  message: string;
+};
+
+type DeleteGroupRequest = {
+  groupId: string;
+};
+
+type DeleteGroupResponse = {
+  message: string;
+};
+
 const groupSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getGroups: builder.query<Group[], void>({
@@ -57,10 +74,10 @@ const groupSlice = apiSlice.injectEndpoints({
       invalidatesTags: ["Group"],
     }),
     updateGroup: builder.mutation<UpdateGroupResponse, UpdateGroupRequest>({
-      query: ({ groupId, ...groupData }) => ({
-        url: `group/${groupId}`,
+      query: ({ ...groupData }) => ({
+        url: `group`,
         method: "PATCH",
-        body: groupData,
+        body: { ...groupData },
       }),
       invalidatesTags: ["Group"],
     }),
@@ -75,6 +92,22 @@ const groupSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Group"],
     }),
+    leaveGroup: builder.mutation<LeaveGroupResponse, LeaveGroupRequest>({
+      query: ({ groupId }) => ({
+        url: `leave`,
+        method: "POST",
+        body: { groupId },
+      }),
+      invalidatesTags: ["Group"],
+    }),
+    deleteGroup: builder.mutation<DeleteGroupResponse, DeleteGroupRequest>({
+      query: ({ groupId }) => ({
+        url: `group`,
+        method: "DELETE",
+        body: { groupId },
+      }),
+      invalidatesTags: ["Group"],
+    }),
   }),
   overrideExisting: false,
 });
@@ -84,4 +117,6 @@ export const {
   useCreateGroupMutation,
   useUpdateGroupMutation,
   useRespondToInvitationMutation,
+  useLeaveGroupMutation,
+  useDeleteGroupMutation,
 } = groupSlice;

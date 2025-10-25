@@ -4,7 +4,12 @@ import type { Request, Response } from "express";
 import User from "../models/user.model";
 import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
-import { GOOGLE_CLIENT_ID, JWT_SECRET, NAME_LENGTH_LIMIT } from "../config";
+import {
+  GOOGLE_CLIENT_ID,
+  JWT_SECRET,
+  MAX_TOTAL_MEMBERS,
+  NAME_LENGTH_LIMIT,
+} from "../config";
 import authMiddleware from "../middlewares/auth";
 
 const router: Router = express.Router();
@@ -114,5 +119,46 @@ router.patch("/", authMiddleware, async (req: Request, res: Response) => {
     });
   }
 });
+
+// Get name by emails
+router.post(
+  "/get-names",
+  authMiddleware,
+  async (req: Request, res: Response) => {
+    try {
+      const { emails } = req.body;
+
+      if (!emails || !Array.isArray(emails)) {
+        res.status(400).json({ message: "Invalid emails array" });
+        return;
+      }
+
+      // Limit the number of emails to prevent abuse
+      if (emails.length > MAX_TOTAL_MEMBERS) {
+        res
+          .status(400)
+          .json({ message: "Too many emails. Maximum 100 allowed" });
+        return;
+      }
+
+      const users = await User.find({ email: { $in: emails } }).select(
+        "email name"
+      );
+
+      const userMap = users.reduce((acc, user) => {
+        acc[user.email] = user.name || user.email;
+        return acc;
+      }, {} as { [key: string]: string });
+
+      res.status(200).json(userMap);
+    } catch (error) {
+      console.error(JSON.stringify(error));
+      res.status(500).json({
+        message: "Internal server error",
+        error: JSON.stringify(error),
+      });
+    }
+  }
+);
 
 export default router;

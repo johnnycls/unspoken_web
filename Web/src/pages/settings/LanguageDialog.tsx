@@ -46,7 +46,7 @@ const LanguageDialog: React.FC<LanguageDialogProps> = ({
       style={{ width: "90vw", maxWidth: "400px" }}
     >
       <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col">
           <label htmlFor="language" className="text-sm">
             {t("settings.languageLabel")}
           </label>

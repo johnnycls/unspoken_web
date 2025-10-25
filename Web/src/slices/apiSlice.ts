@@ -13,7 +13,7 @@ export const apiSlice = createApi({
       }
     },
   }),
-  tagTypes: ["User", "Crush", "Letter", "Group"],
+  tagTypes: ["User", "Crush", "Letter", "Group", "Users"],
   reducerPath: "api",
   endpoints: (builder) => ({}),
 });

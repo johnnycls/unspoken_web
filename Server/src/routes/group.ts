@@ -28,6 +28,7 @@ router.get("/", authMiddleware, async (req: Request, res: Response) => {
       description: group.description,
       memberEmails: group.memberEmails,
       invitedEmails: group.invitedEmails,
+      creatorEmail: group.creatorEmail,
     }));
 
     res.status(200).json(results);
@@ -106,84 +107,78 @@ router.post("/", authMiddleware, async (req: Request, res: Response) => {
 });
 
 // Update a group (only creator can update)
-router.patch(
-  "/:groupId",
-  authMiddleware,
-  async (req: Request, res: Response) => {
-    try {
-      const userEmail = res.locals.email as string;
-      const { groupId } = req.params;
-      const { name, description, memberEmails, invitedEmails } = req.body;
+router.patch("/", authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const userEmail = res.locals.email as string;
+    const { groupId, name, description, memberEmails, invitedEmails } =
+      req.body;
 
-      const group = await Group.findById(groupId);
+    const group = await Group.findById(groupId);
 
-      if (!group) {
-        res.status(404).json({ message: "Group not found" });
-        return;
-      }
-
-      // Only creator can update the group
-      if (group.creatorEmail !== userEmail) {
-        res.status(403).json({
-          message: "Only the group creator can update this group",
-        });
-        return;
-      }
-
-      // Update name if provided
-      if (name !== undefined) {
-        if (name.length > NAME_LENGTH_LIMIT) {
-          res.status(400).json({ message: "Group name is too long" });
-          return;
-        }
-        group.name = name;
-      }
-
-      // Update description if provided
-      if (description !== undefined) {
-        if (description.length > DESCRIPTION_LENGTH_LIMIT) {
-          res.status(400).json({ message: "Description is too long" });
-          return;
-        }
-        group.description = description;
-      }
-
-      // Update member emails if provided
-      if (memberEmails !== undefined) {
-        const memberEmailsArray = Array.isArray(memberEmails)
-          ? memberEmails
-          : [];
-        group.memberEmails = memberEmailsArray;
-      }
-
-      // Update invited emails if provided
-      if (invitedEmails !== undefined) {
-        const invitedEmailsArray = Array.isArray(invitedEmails)
-          ? invitedEmails
-          : [];
-        group.invitedEmails = invitedEmailsArray;
-      }
-
-      const totalCount = group.memberEmails.length + group.invitedEmails.length;
-      if (totalCount > MAX_TOTAL_MEMBERS) {
-        res.status(400).json({
-          message: `Total members and invited members cannot exceed ${MAX_TOTAL_MEMBERS}`,
-        });
-        return;
-      }
-
-      await group.save();
-
-      res.status(200).json({ message: "Group updated successfully" });
-    } catch (error) {
-      console.error(JSON.stringify(error));
-      res.status(500).json({
-        message: "Internal server error",
-        error: JSON.stringify(error),
-      });
+    if (!group) {
+      res.status(404).json({ message: "Group not found" });
+      return;
     }
+
+    // Only creator can update the group
+    if (group.creatorEmail !== userEmail) {
+      res.status(403).json({
+        message: "Only the group creator can update this group",
+      });
+      return;
+    }
+
+    // Update name if provided
+    if (name !== undefined) {
+      if (name.length > NAME_LENGTH_LIMIT) {
+        res.status(400).json({ message: "Group name is too long" });
+        return;
+      }
+      group.name = name;
+    }
+
+    // Update description if provided
+    if (description !== undefined) {
+      if (description.length > DESCRIPTION_LENGTH_LIMIT) {
+        res.status(400).json({ message: "Description is too long" });
+        return;
+      }
+      group.description = description;
+    }
+
+    // Update member emails if provided
+    if (memberEmails !== undefined) {
+      const memberEmailsArray = Array.isArray(memberEmails) ? memberEmails : [];
+      group.memberEmails = memberEmailsArray;
+    }
+
+    // Update invited emails if provided
+    if (invitedEmails !== undefined) {
+      const invitedEmailsArray = Array.isArray(invitedEmails)
+        ? invitedEmails
+        : [];
+      group.invitedEmails = invitedEmailsArray;
+    }
+
+    const totalCount = group.memberEmails.length + group.invitedEmails.length;
+    if (totalCount > MAX_TOTAL_MEMBERS) {
+      res.status(400).json({
+        message: `Total members and invited members cannot exceed ${MAX_TOTAL_MEMBERS}`,
+      });
+      return;
+    }
+
+    await group.save();
+
+    res.status(200).json({ message: "Group updated successfully" });
+  } catch (error) {
+    console.error(JSON.stringify(error));
+    res.status(500).json({
+      message: "Internal server error",
+      error: JSON.stringify(error),
+    });
   }
-);
+});
 
 // Handle group invitation (accept or decline)
 router.post(
@@ -249,5 +244,85 @@ router.post(
     }
   }
 );
+
+// Leave group (for members, not creator)
+router.post("/leave", authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const userEmail = res.locals.email as string;
+    const { groupId } = req.body;
+
+    const group = await Group.findById(groupId);
+
+    if (!group) {
+      res.status(404).json({ message: "Group not found" });
+      return;
+    }
+
+    // Check if user is the creator
+    if (group.creatorEmail === userEmail) {
+      res.status(403).json({
+        message:
+          "Creator cannot leave the group. Please delete the group or transfer ownership first.",
+      });
+      return;
+    }
+
+    // Check if user is a member
+    if (!group.memberEmails.includes(userEmail)) {
+      res.status(403).json({
+        message: "You are not a member of this group",
+      });
+      return;
+    }
+
+    // Remove user from memberEmails
+    group.memberEmails = group.memberEmails.filter(
+      (email) => email !== userEmail
+    );
+
+    await group.save();
+
+    res.status(200).json({ message: "Successfully left the group" });
+  } catch (error) {
+    console.error(JSON.stringify(error));
+    res.status(500).json({
+      message: "Internal server error",
+      error: JSON.stringify(error),
+    });
+  }
+});
+
+// Delete group (only creator)
+router.delete("/", authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const userEmail = res.locals.email as string;
+    const { groupId } = req.body;
+
+    const group = await Group.findById(groupId);
+
+    if (!group) {
+      res.status(404).json({ message: "Group not found" });
+      return;
+    }
+
+    // Check if user is the creator
+    if (group.creatorEmail !== userEmail) {
+      res.status(403).json({
+        message: "Only the creator can delete this group",
+      });
+      return;
+    }
+
+    await Group.findByIdAndDelete(groupId);
+
+    res.status(200).json({ message: "Group deleted successfully" });
+  } catch (error) {
+    console.error(JSON.stringify(error));
+    res.status(500).json({
+      message: "Internal server error",
+      error: JSON.stringify(error),
+    });
+  }
+});
 
 export default router;

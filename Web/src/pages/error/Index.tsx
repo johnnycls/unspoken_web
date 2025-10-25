@@ -1,10 +1,8 @@
 import React from "react";
 import { useRouteError, isRouteErrorResponse } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useThemeColor } from "../../hooks/useThemeColor";
 
 const ErrorPage: React.FC = () => {
-  useThemeColor("#FFFFFF");
   const error = useRouteError();
   let errorMessage: string;
   const { t } = useTranslation();
