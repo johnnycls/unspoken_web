@@ -80,6 +80,36 @@ i18n
             noGroups: "No groups yet",
             noInvitations: "No invitations",
           },
+          // Crush pages
+          crush: {
+            title: "Crush",
+            noCrushYet: "No Crush Currently",
+            noCrushEntered:
+              "No Crush Entered, Please Enter During Submission Period (Days 1-14).",
+            updateStatus: "Update Status",
+            updateCrush: "Update Crush",
+            yourCrushName: "Your Crush Name",
+            yourMessage: "Your Message",
+            theyLikeYouToo: "They Like You Too",
+            hasCrush: "I have a crush",
+            noCrush: "I don't have a crush",
+            crushEmail: "Crush Email",
+            emailPlaceholder: "Enter crush email",
+            message: "Message",
+            messagePlaceholder: "Enter your message...",
+            rules: {
+              title: "How It Works",
+              currentStage: "Current Stage",
+              submissionPeriod: "Submission Period (Days 1-14)",
+              viewingPeriod: "Viewing Period (Days 15-31)",
+              days1to14: "Days 1-14: Submission Period",
+              days1to14Desc:
+                "You can create or update your crush and message. Response messages are hidden during this period.",
+              days15to31: "Days 15-31: Viewing Period",
+              days15to31Desc:
+                "View if your crush likes you back! You cannot modify your submission during this period.",
+            },
+          },
           // Profile update messages
           updateProfileSuccess: "Profile updated successfully",
           updateProfileError: "Failed to update profile",
@@ -99,6 +129,12 @@ i18n
           memberNotFound: "Member not found",
           memberAlreadyInGroup: "Member already in group",
           invalidEmail: "Invalid email address",
+          // Crush messages
+          fetchCrushesError: "Failed to load crushes",
+          updateCrushSuccess: "Crush updated successfully",
+          updateCrushError: "Failed to update crush",
+          deleteCrushSuccess: "Crush deleted successfully",
+          deleteCrushError: "Failed to delete crush",
         },
       },
       zh: {
@@ -156,6 +192,36 @@ i18n
             noGroups: "尚無羣組",
             noInvitations: "尚無邀請",
           },
+          // Crush pages
+          crush: {
+            title: "暗戀對象",
+            noCrushYet: "目前沒有暗戀對象",
+            noCrushEntered:
+              "沒有填寫暗戀對象，如有暗戀對象，請在下次填寫期間（1-14日）填寫。",
+            updateStatus: "更新狀態",
+            updateCrush: "更新暗戀對象",
+            yourCrushName: "你的暗戀對象",
+            yourMessage: "你的留言",
+            theyLikeYouToo: "對方也喜歡你",
+            hasCrush: "我有暗戀對象",
+            noCrush: "我沒有暗戀對象",
+            crushEmail: "暗戀對象電子郵件",
+            emailPlaceholder: "輸入暗戀對象的電子郵件",
+            message: "留言",
+            messagePlaceholder: "輸入你的留言...",
+            rules: {
+              title: "使用規則",
+              currentStage: "目前階段",
+              submissionPeriod: "填寫期間（1-14日）",
+              viewingPeriod: "查看期間（15-31日）",
+              days1to14: "1-14日：填寫期間",
+              days1to14Desc:
+                "可以填寫或修改你的暗戀對象和留言。此期間無法查看對方的回應。",
+              days15to31: "15-31日：查看期間",
+              days15to31Desc:
+                "可以查看對方是否也喜歡你！此期間無法修改你的填寫內容。",
+            },
+          },
           // Profile update messages
           updateProfileSuccess: "個人資料更新成功",
           updateProfileError: "個人資料更新失敗",
@@ -175,6 +241,12 @@ i18n
           memberNotFound: "找不到該成員",
           memberAlreadyInGroup: "該成員已在羣組中",
           invalidEmail: "無效的電子郵件地址",
+          // Crush messages
+          fetchCrushesError: "載入暗戀對象失敗",
+          updateCrushSuccess: "暗戀對象更新成功",
+          updateCrushError: "暗戀對象更新失敗",
+          deleteCrushSuccess: "暗戀對象刪除成功",
+          deleteCrushError: "暗戀對象刪除失敗",
         },
       },
     },

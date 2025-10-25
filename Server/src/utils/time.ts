@@ -19,3 +19,10 @@ export function displayDate(date: Date) {
   const formattedDateTime = `${day}/${month}/${year}`;
   return formattedDateTime;
 }
+
+export const getCurrentMonth = (date: Date): string => {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+    2,
+    "0"
+  )}`;
+};

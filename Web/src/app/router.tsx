@@ -4,6 +4,8 @@ import Settings from "../pages/settings/Index";
 import Groups from "../pages/group/Index";
 import GroupDetail from "../pages/group/detail/Index";
 import GroupForm from "../pages/group/form/Index";
+import Crush from "../pages/crush/Index";
+import UpdateCrush from "../pages/crush/update/Index";
 
 const router = createBrowserRouter([
   {
@@ -13,6 +15,8 @@ const router = createBrowserRouter([
     children: [
       { path: "", element: <Settings /> },
       { path: "settings", element: <Settings /> },
+      { path: "crush", element: <Crush /> },
+      { path: "crush/update", element: <UpdateCrush /> },
       { path: "groups", element: <Groups /> },
       { path: "groups/create", element: <GroupForm /> },
       { path: "groups/:groupId", element: <GroupDetail /> },

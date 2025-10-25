@@ -21,6 +21,7 @@ import {
   DESCRIPTION_LENGTH_LIMIT,
 } from "../../../config";
 import GroupFormContent from "./Content";
+import { isEmailValid } from "../../../utils/general";
 
 const GroupForm: React.FC = () => {
   const { t } = useTranslation();
@@ -151,8 +152,7 @@ const GroupForm: React.FC = () => {
       return;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(trimmedEmail)) {
+    if (!isEmailValid(trimmedEmail)) {
       toast.current?.show({
         severity: "warn",
         summary: t("groups.invalidEmail"),

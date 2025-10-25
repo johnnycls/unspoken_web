@@ -14,6 +14,13 @@ export const addDays = (
   return copyDate;
 };
 
+export const getCurrentMonth = (date: Date = new Date()): string => {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+    2,
+    "0"
+  )}`;
+};
+
 export function sortByDate<T>(arr: Array<T>, key: keyof T, asc = true) {
   const cloned = Array.from(arr);
   return cloned.sort((a, b) => {
@@ -39,25 +46,6 @@ export function displayDate(date: Date) {
   const day = String(date.getDate()).padStart(2, "0");
   const formattedDateTime = `${day}/${month}/${year}`;
   return formattedDateTime;
-}
-
-export function isTimeConflict(
-  newDateRange: { startDate: Date; endDate: Date },
-  existingDateRanges: { startDate: Date; endDate: Date }[]
-): boolean {
-  for (const existingDateRange of existingDateRanges) {
-    if (
-      (newDateRange.startDate >= existingDateRange.startDate &&
-        newDateRange.startDate < existingDateRange.endDate) ||
-      (newDateRange.endDate > existingDateRange.startDate &&
-        newDateRange.endDate <= existingDateRange.endDate) ||
-      (newDateRange.startDate <= existingDateRange.startDate &&
-        newDateRange.endDate >= existingDateRange.endDate)
-    ) {
-      return true;
-    }
-  }
-  return false;
 }
 
 export function formatRelativeTime(date: Date): string {

@@ -88,7 +88,9 @@ const GroupDetailContent: React.FC<GroupDetailContentProps> = ({
       <AppBar onBack={handleBack}>
         <div className="flex justify-between items-center w-full">
           <h1 className="text-2xl">{t("groups.detail")}</h1>
-          {isCreator && <Button icon="pi pi-pencil" onClick={handleEdit} />}
+          {isCreator && (
+            <Button icon="pi pi-pencil" className="p-0!" onClick={handleEdit} />
+          )}
         </div>
       </AppBar>
 

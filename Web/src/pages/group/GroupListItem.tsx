@@ -10,7 +10,7 @@ type GroupListItemProps = {
 const GroupListItem: React.FC<GroupListItemProps> = ({ group, onClick }) => {
   return (
     <Card
-      className="cursor-pointer"
+      className="w-full cursor-pointer"
       onClick={() => onClick(group.id)}
       pt={{ body: { className: "p-4!" } }}
     >

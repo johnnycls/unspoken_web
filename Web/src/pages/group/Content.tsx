@@ -43,11 +43,11 @@ const Content: React.FC<{ groups: Group[]; profile: profile }> = ({
       <AppBar>
         <div className="flex justify-between items-center w-full">
           <h1 className="text-2xl">{t("groups.title")}</h1>
-          <Button icon="pi pi-plus" onClick={handleAddClick} />
+          <Button icon="pi pi-plus" className="p-0!" onClick={handleAddClick} />
         </div>
       </AppBar>
 
-      <div className="w-full h-full flex flex-col p-4 gap-2 overflow-y-auto align-center">
+      <div className="w-full h-full flex flex-col p-4 gap-2 overflow-y-auto items-center">
         <SelectButton
           value={filterType}
           onChange={(e) => setFilterType(e.value)}
@@ -55,7 +55,7 @@ const Content: React.FC<{ groups: Group[]; profile: profile }> = ({
         />
 
         {filteredGroups.length === 0 ? (
-          <div className="text-center text-gray-500 pt-8">
+          <div className="w-full text-center text-gray-500 pt-8">
             {filterType === "joined"
               ? t("groups.noGroups")
               : t("groups.noInvitations")}

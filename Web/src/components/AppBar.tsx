@@ -18,8 +18,8 @@ const AppBar: React.FC<{ children?: React.ReactNode; onBack?: () => void }> = ({
     >
       {onBack && (
         <Button
-          icon="pi pi-chevron-left"
-          className="p-0"
+          icon="pi pi-arrow-left"
+          className="p-0!"
           onClick={() => {
             if (onBack) {
               onBack();

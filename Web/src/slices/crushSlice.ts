@@ -35,9 +35,19 @@ const crushSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Crush"],
     }),
+    deleteCrush: builder.mutation<CreateCrushResponse, void>({
+      query: () => ({
+        url: "crush/",
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Crush"],
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useGetCrushesQuery, useCreateOrUpdateCrushMutation } =
-  crushSlice;
+export const {
+  useGetCrushesQuery,
+  useCreateOrUpdateCrushMutation,
+  useDeleteCrushMutation,
+} = crushSlice;
