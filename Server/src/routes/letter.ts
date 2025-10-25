@@ -20,9 +20,11 @@ router.get("/", authMiddleware, async (req: Request, res: Response) => {
     // Find all letters where user is either sender or recipient
     // and letter was sent before today (yesterday or earlier)
     const letters = await Letter.find({
-      $or: [{ fromEmail: userEmail }, { toEmail: userEmail }],
-      timestamp: { $lt: today },
-    });
+      $or: [
+        { fromEmail: userEmail },
+        { toEmail: userEmail, timestamp: { $lt: today } },
+      ],
+    }).sort({ timestamp: -1 });
 
     const results = letters.map((letter) => ({
       fromGroupId: letter.fromGroupId,

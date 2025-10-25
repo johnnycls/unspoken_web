@@ -73,43 +73,47 @@ const Content: React.FC<{ crushes: Crush[] }> = ({ crushes }) => {
           </AccordionTab>
         </Accordion>
 
-        {!currentCrush ? (
-          <div className="flex flex-col items-center justify-center gap-4">
-            {isSubmissionPeriod
-              ? t("crush.noCrushYet")
-              : t("crush.noCrushEntered")}
-            {isSubmissionPeriod && (
-              <Button
-                label={t("crush.updateStatus")}
-                onClick={handleUpdateClick}
-              />
-            )}
-          </div>
-        ) : (
-          <div className="flex flex-col gap-4">
-            <h3 className="font-semibold mb-2">{t("crush.yourCrushName")}:</h3>
-            <p className="text-lg mb-3">{currentCrush.toEmail}</p>
+        <Card>
+          {!currentCrush ? (
+            <div className="flex flex-col items-center justify-center gap-4">
+              {isSubmissionPeriod
+                ? t("crush.noCrushYet")
+                : t("crush.noCrushEntered")}
+              {isSubmissionPeriod && (
+                <Button
+                  label={t("crush.updateStatus")}
+                  onClick={handleUpdateClick}
+                />
+              )}
+            </div>
+          ) : (
+            <div className="flex flex-col gap-4">
+              <h3 className="font-semibold mb-2">
+                {t("crush.yourCrushName")}:
+              </h3>
+              <p className="text-lg mb-3">{currentCrush.toEmail}</p>
 
-            <h3 className="font-semibold mb-2">{t("crush.yourMessage")}:</h3>
-            <p className="mb-2">{currentCrush.message}</p>
-            <p className="text-sm text-gray-500">{currentCrush.month}</p>
+              <h3 className="font-semibold mb-2">{t("crush.yourMessage")}:</h3>
+              <p className="mb-2">{currentCrush.message}</p>
+              <p className="text-sm text-gray-500">{currentCrush.month}</p>
 
-            {isViewingPeriod && currentCrush.responseMessage && (
-              <>
-                {t("crush.theyLikeYouToo")}
-                <p className="mb-2">{currentCrush.responseMessage}</p>
-              </>
-            )}
+              {isViewingPeriod && currentCrush.responseMessage && (
+                <>
+                  {t("crush.theyLikeYouToo")}
+                  <p className="mb-2">{currentCrush.responseMessage}</p>
+                </>
+              )}
 
-            {isSubmissionPeriod && (
-              <Button
-                label={t("crush.updateStatus")}
-                onClick={handleUpdateClick}
-                className="w-full"
-              />
-            )}
-          </div>
-        )}
+              {isSubmissionPeriod && (
+                <Button
+                  label={t("crush.updateStatus")}
+                  onClick={handleUpdateClick}
+                  className="w-full"
+                />
+              )}
+            </div>
+          )}
+        </Card>
       </div>
 
       <BottomTab activeIndex={1} />
