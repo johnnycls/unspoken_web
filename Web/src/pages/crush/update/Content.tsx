@@ -12,7 +12,7 @@ import {
   useCreateOrUpdateCrushMutation,
   useDeleteCrushMutation,
 } from "../../../slices/crushSlice";
-import { isEmailValid } from "../../../utils/general";
+import { validateEmail } from "../../../utils/validation";
 import { getCurrentMonth } from "../../../utils/time";
 import { ToggleButton } from "primereact/togglebutton";
 import { Card } from "primereact/card";
@@ -45,7 +45,7 @@ const Content: React.FC<{ crushes: Crush[] }> = ({ crushes }) => {
 
   const isFormValid = () => {
     if (!hasCrush) return currentCrush !== undefined;
-    return email.trim() !== "" && isEmailValid(email) && message.trim() !== "";
+    return email.trim() !== "" && validateEmail(email) && message.trim() !== "";
   };
 
   const handleSubmit = async () => {
@@ -145,9 +145,9 @@ const Content: React.FC<{ crushes: Crush[] }> = ({ crushes }) => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t("crush.emailPlaceholder")}
-                  className={email && !isEmailValid(email) ? "p-invalid" : ""}
+                  className={email && !validateEmail(email) ? "p-invalid" : ""}
                 />
-                {email && !isEmailValid(email) && (
+                {email && !validateEmail(email) && (
                   <small className="p-error">{t("invalidEmail")}</small>
                 )}
               </div>

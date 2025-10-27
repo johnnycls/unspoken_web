@@ -11,7 +11,7 @@ import { Checkbox } from "primereact/checkbox";
 import { Card } from "primereact/card";
 import { Group } from "../../../slices/groupSlice";
 import { Letter, useSendLetterMutation } from "../../../slices/letterSlice";
-import { isEmailValid } from "../../../utils/general";
+import { validateEmail } from "../../../utils/validation";
 import { isSameDay } from "../../../utils/time";
 import { profile } from "../../../slices/userSlice";
 
@@ -72,7 +72,7 @@ const Content: React.FC<{
     return (
       selectedGroup !== null &&
       selectedUser !== "" &&
-      isEmailValid(selectedUser) &&
+      validateEmail(selectedUser) &&
       alias.trim() !== "" &&
       content.trim() !== "" &&
       acknowledged &&

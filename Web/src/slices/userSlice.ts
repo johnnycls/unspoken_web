@@ -1,6 +1,8 @@
 import { langs } from "../assets/langs";
 import { apiSlice } from "./apiSlice";
 import i18next from "i18next";
+import { validateName, validateEmailArray } from "../utils/validation";
+import { MAX_TOTAL_MEMBERS } from "../config";
 
 export type profile = {
   email: string;
@@ -36,11 +38,21 @@ const userSlice = apiSlice.injectEndpoints({
         lang?: string;
       }
     >({
-      query: (profileData) => ({
-        url: "user/",
-        method: "PATCH",
-        body: profileData,
-      }),
+      query: (profileData) => {
+        // Validate name length if provided
+        if (profileData.name !== undefined) {
+          const nameValidation = validateName(profileData.name);
+          if (!nameValidation.valid) {
+            throw new Error(nameValidation.error);
+          }
+        }
+
+        return {
+          url: "user/",
+          method: "PATCH",
+          body: profileData,
+        };
+      },
       async onQueryStarted(profileData, {}) {
         try {
           if (profileData.lang) {
@@ -54,11 +66,22 @@ const userSlice = apiSlice.injectEndpoints({
       { [key: string]: string },
       { emails: string[] }
     >({
-      query: (data) => ({
-        url: "user/get-names",
-        method: "POST",
-        body: data,
-      }),
+      query: (data) => {
+        // Validate email array
+        const emailValidation = validateEmailArray(
+          data.emails,
+          MAX_TOTAL_MEMBERS
+        );
+        if (!emailValidation.valid) {
+          throw new Error(emailValidation.error);
+        }
+
+        return {
+          url: "user/get-names",
+          method: "POST",
+          body: data,
+        };
+      },
       providesTags: ["Users"],
     }),
   }),

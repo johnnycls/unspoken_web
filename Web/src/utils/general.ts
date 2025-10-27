@@ -15,11 +15,6 @@ export function hasIntersection<T>(arr1: T[], arr2: T[]): boolean {
   return arr2.some((item) => set.has(item));
 }
 
-export function isEmailValid(email: string): boolean {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-}
-
 export function getPreviewContent(
   content: string,
   maxLength: number = 50

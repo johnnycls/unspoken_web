@@ -1,4 +1,9 @@
 import { apiSlice } from "./apiSlice";
+import {
+  validateEmail,
+  validateLetterContent,
+  validateObjectId,
+} from "../utils/validation";
 
 export type Letter = {
   fromGroupId: string;
@@ -6,18 +11,6 @@ export type Letter = {
   alias: string;
   content: string;
   timestamp: Date;
-};
-
-type SendLetterRequest = {
-  fromGroupId: string;
-  toEmail: string;
-  alias: string;
-  content: string;
-};
-
-type SendLetterResponse = {
-  message: string;
-  letterId: string;
 };
 
 const letterSlice = apiSlice.injectEndpoints({
@@ -28,12 +21,41 @@ const letterSlice = apiSlice.injectEndpoints({
       }),
       providesTags: ["Letter"],
     }),
-    sendLetter: builder.mutation<SendLetterResponse, SendLetterRequest>({
-      query: (letterData) => ({
-        url: "letter/",
-        method: "POST",
-        body: letterData,
-      }),
+    sendLetter: builder.mutation<
+      {
+        message: string;
+        letterId: string;
+      },
+      {
+        fromGroupId: string;
+        toEmail: string;
+        alias: string;
+        content: string;
+      }
+    >({
+      query: (letterData) => {
+        // Validate group ID
+        if (!validateObjectId(letterData.fromGroupId)) {
+          throw new Error("Invalid group ID format");
+        }
+
+        // Validate email format
+        if (!validateEmail(letterData.toEmail)) {
+          throw new Error("Invalid email format");
+        }
+
+        // Validate content
+        const contentValidation = validateLetterContent(letterData.content);
+        if (!contentValidation.valid) {
+          throw new Error(contentValidation.error);
+        }
+
+        return {
+          url: "letter/",
+          method: "POST",
+          body: letterData,
+        };
+      },
       invalidatesTags: ["Letter"],
     }),
   }),
