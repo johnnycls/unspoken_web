@@ -5,9 +5,12 @@ import { PrimeReactProvider } from "primereact/api";
 import LoadingScreen from "../components/LoadingScreen";
 import { useGetProfileQuery } from "../slices/userSlice";
 import Login from "./Login";
+import { useLanguageFont } from "../hooks/useLanguageFont";
 
 const App: React.FC = () => {
   const { isError, isLoading, isSuccess } = useGetProfileQuery();
+
+  useLanguageFont();
 
   return (
     <PrimeReactProvider>
