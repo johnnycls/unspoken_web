@@ -23,6 +23,7 @@ const AddMemberInput: React.FC<AddMemberInputProps> = ({
         onChange={(e) => onChange(e.target.value)}
         placeholder={t("groups.emailPlaceholder")}
         className="flex-1"
+        maxLength={254}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             onAdd();

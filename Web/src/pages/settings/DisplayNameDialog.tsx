@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
+import { NAME_LENGTH_LIMIT } from "../../config";
 
 interface DisplayNameDialogProps {
   visible: boolean;
@@ -52,6 +53,7 @@ const DisplayNameDialog: React.FC<DisplayNameDialogProps> = ({
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
             placeholder={t("settings.displayNamePlaceholder")}
+            maxLength={NAME_LENGTH_LIMIT}
           />
         </div>
 

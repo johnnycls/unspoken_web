@@ -2,6 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
+import { NAME_LENGTH_LIMIT, DESCRIPTION_LENGTH_LIMIT } from "../../../config";
 
 interface GroupInfoFormProps {
   name: string;
@@ -27,6 +28,7 @@ const GroupInfoForm: React.FC<GroupInfoFormProps> = ({
           onChange={(e) => onNameChange(e.target.value)}
           placeholder={t("groups.namePlaceholder")}
           className="w-full"
+          maxLength={NAME_LENGTH_LIMIT}
         />
       </div>
 
@@ -41,6 +43,7 @@ const GroupInfoForm: React.FC<GroupInfoFormProps> = ({
           className="w-full"
           rows={3}
           autoResize
+          maxLength={DESCRIPTION_LENGTH_LIMIT}
         />
       </div>
     </div>

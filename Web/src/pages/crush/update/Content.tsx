@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import AppBar from "../../../components/AppBar";
 import { Button } from "primereact/button";
-import { InputSwitch } from "primereact/inputswitch";
 import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Toast } from "primereact/toast";
@@ -15,6 +14,7 @@ import {
 import { validateEmail } from "../../../utils/validation";
 import { ToggleButton } from "primereact/togglebutton";
 import { Card } from "primereact/card";
+import { MESSAGE_LENGTH_LIMIT } from "../../../config";
 
 const Content: React.FC<{ crush: Crush | null }> = ({ crush }) => {
   const { t } = useTranslation();
@@ -148,6 +148,7 @@ const Content: React.FC<{ crush: Crush | null }> = ({ crush }) => {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t("crush.emailPlaceholder")}
                   className={email && !validateEmail(email) ? "p-invalid" : ""}
+                  maxLength={254}
                 />
                 {email && !validateEmail(email) && (
                   <small className="p-error">{t("invalidEmail")}</small>
@@ -165,6 +166,7 @@ const Content: React.FC<{ crush: Crush | null }> = ({ crush }) => {
                   placeholder={t("crush.messagePlaceholder")}
                   rows={5}
                   autoResize
+                  maxLength={MESSAGE_LENGTH_LIMIT}
                 />
               </div>
             </>

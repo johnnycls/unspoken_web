@@ -13,6 +13,7 @@ import { Group } from "../../../slices/groupSlice";
 import { Letter, useSendLetterMutation } from "../../../slices/letterSlice";
 import { validateEmail } from "../../../utils/validation";
 import { isSameDay } from "../../../utils/time";
+import { NAME_LENGTH_LIMIT, LETTER_LENGTH_LIMIT } from "../../../config";
 import { profile } from "../../../slices/userSlice";
 
 const Content: React.FC<{
@@ -174,6 +175,7 @@ const Content: React.FC<{
               value={alias}
               onChange={(e) => setAlias(e.target.value)}
               placeholder={t("letter.aliasPlaceholder")}
+              maxLength={NAME_LENGTH_LIMIT}
             />
           </div>
 
@@ -189,6 +191,7 @@ const Content: React.FC<{
               placeholder={t("letter.contentPlaceholder")}
               rows={8}
               autoResize
+              maxLength={LETTER_LENGTH_LIMIT}
             />
           </div>
 
