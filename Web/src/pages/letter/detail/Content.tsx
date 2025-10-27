@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import AppBar from "../../../components/AppBar";
 import { Card } from "primereact/card";
 import { Letter } from "../../../slices/letterSlice";
+import { formatDate } from "../../../utils/time";
 
 const Content: React.FC<{ letter: Letter }> = ({ letter }) => {
   const { t } = useTranslation();
@@ -11,11 +12,6 @@ const Content: React.FC<{ letter: Letter }> = ({ letter }) => {
 
   const handleBack = () => {
     navigate("/");
-  };
-
-  const formatDate = (timestamp: Date) => {
-    const date = new Date(timestamp);
-    return date.toLocaleString();
   };
 
   return (

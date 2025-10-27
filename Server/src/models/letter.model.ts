@@ -11,21 +11,20 @@ export interface ILetter extends Document {
 
 const letterSchema: Schema = new Schema(
   {
-    fromEmail: { type: String, required: true, index: true },
-    fromGroupId: { type: String, required: true, index: true },
-    toEmail: { type: String, required: true, index: true },
+    fromEmail: { type: String, required: true },
+    fromGroupId: { type: String, required: true },
+    toEmail: { type: String, required: true },
     alias: { type: String, default: "" },
     content: { type: String, required: true },
-    timestamp: { type: Date, default: Date.now, index: true },
+    timestamp: { type: Date, default: Date.now },
   },
   {
     timestamps: true,
   }
 );
 
-// Compound indexes for optimizing letter queries
-// For GET query: finding letters by fromEmail/toEmail with timestamp filter
-letterSchema.index({ fromEmail: 1, timestamp: -1 });
-letterSchema.index({ toEmail: 1, timestamp: -1 });
+// Compound indexes optimized for query patterns
+letterSchema.index({ fromEmail: 1, timestamp: -1 }); // For sender queries with time sort/filter
+letterSchema.index({ toEmail: 1, timestamp: -1 }); // For recipient queries with time filter
 
 export default mongoose.model<ILetter>("Letter", letterSchema);

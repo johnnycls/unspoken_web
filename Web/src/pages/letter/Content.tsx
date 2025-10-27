@@ -6,6 +6,8 @@ import BottomTab from "../../components/BottomTab";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { Letter } from "../../slices/letterSlice";
+import { formatDate } from "../../utils/time";
+import { getPreviewContent } from "../../utils/general";
 
 const Content: React.FC<{ letters: Letter[] }> = ({ letters }) => {
   const { t } = useTranslation();
@@ -17,16 +19,6 @@ const Content: React.FC<{ letters: Letter[] }> = ({ letters }) => {
 
   const handleLetterClick = (index: number) => {
     navigate(`/${index}`);
-  };
-
-  const formatDate = (timestamp: Date) => {
-    const date = new Date(timestamp);
-    return date.toLocaleString();
-  };
-
-  const getPreviewContent = (content: string, maxLength: number = 50) => {
-    if (content.length <= maxLength) return content;
-    return content.substring(0, maxLength) + "...";
   };
 
   return (

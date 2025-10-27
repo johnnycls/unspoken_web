@@ -12,13 +12,18 @@ const groupSchema: Schema = new Schema(
   {
     name: { type: String, required: true },
     description: { type: String, default: "" },
-    creatorEmail: { type: String, default: "", index: true },
-    memberEmails: { type: [String], default: [], index: true },
-    invitedEmails: { type: [String], default: [], index: true },
+    creatorEmail: { type: String, default: "" },
+    memberEmails: { type: [String], default: [] },
+    invitedEmails: { type: [String], default: [] },
   },
   {
     timestamps: true,
   }
 );
+
+// Indexes optimized for query patterns
+groupSchema.index({ creatorEmail: 1 }); // For counting user's groups
+groupSchema.index({ memberEmails: 1 }); // For finding groups by member
+groupSchema.index({ invitedEmails: 1 }); // For finding groups by invitation
 
 export default mongoose.model<IGroup>("Group", groupSchema);

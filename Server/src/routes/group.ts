@@ -9,6 +9,15 @@ import {
   MAX_TOTAL_MEMBERS,
 } from "../config";
 import authMiddleware from "../middlewares/auth";
+import {
+  handleError,
+  validateRequiredField,
+  validateStringLength,
+  validateEmail,
+  validateObjectId,
+  sanitizeString,
+  removeDuplicates,
+} from "../utils/general";
 
 const router: Router = express.Router();
 
@@ -33,10 +42,7 @@ router.get("/", authMiddleware, async (req: Request, res: Response) => {
 
     res.status(200).json(results);
   } catch (error) {
-    console.error(JSON.stringify(error));
-    res
-      .status(500)
-      .json({ message: "Internal server error", error: JSON.stringify(error) });
+    handleError(error, res);
   }
 });
 
@@ -46,20 +52,20 @@ router.post("/", authMiddleware, async (req: Request, res: Response) => {
     const userEmail = res.locals.email as string;
     const { name, description, invitedEmails } = req.body;
 
-    if (!name) {
-      res.status(400).json({ message: "Group name is required" });
-      return;
-    }
+    if (!validateRequiredField(name, "Group name", res)) return;
 
-    if (name.length > NAME_LENGTH_LIMIT) {
-      res.status(400).json({ message: "Group name is too long" });
+    if (!validateStringLength(name, NAME_LENGTH_LIMIT, "Group name", res))
       return;
-    }
 
-    if (description && description.length > DESCRIPTION_LENGTH_LIMIT) {
-      res.status(400).json({ message: "Description is too long" });
+    if (
+      !validateStringLength(
+        description,
+        DESCRIPTION_LENGTH_LIMIT,
+        "Description",
+        res
+      )
+    )
       return;
-    }
 
     // Check if user has already created 10 groups
     const userGroupCount = await Group.countDocuments({
@@ -85,13 +91,27 @@ router.post("/", authMiddleware, async (req: Request, res: Response) => {
       return;
     }
 
+    // Validate email format for all invited emails and remove duplicates
+    const uniqueInvitedEmails = removeDuplicates(
+      invitedEmailsArray.map((email: string) => email.toLowerCase())
+    );
+
+    for (const email of uniqueInvitedEmails) {
+      if (!validateEmail(email, "Invited email", res)) return;
+    }
+
+    // Remove creator from invited emails if present
+    const filteredInvitedEmails = uniqueInvitedEmails.filter(
+      (email: string) => email !== userEmail.toLowerCase()
+    );
+
     // Creator is automatically a member
     const group = await Group.create({
-      name,
-      description: description || "",
+      name: sanitizeString(name),
+      description: sanitizeString(description || ""),
       creatorEmail: userEmail,
       memberEmails: [userEmail],
-      invitedEmails: invitedEmailsArray,
+      invitedEmails: filteredInvitedEmails,
     });
 
     res.status(201).json({
@@ -99,10 +119,7 @@ router.post("/", authMiddleware, async (req: Request, res: Response) => {
       message: "Group created successfully",
     });
   } catch (error) {
-    console.error(JSON.stringify(error));
-    res
-      .status(500)
-      .json({ message: "Internal server error", error: JSON.stringify(error) });
+    handleError(error, res);
   }
 });
 
@@ -112,6 +129,9 @@ router.patch("/", authMiddleware, async (req: Request, res: Response) => {
     const userEmail = res.locals.email as string;
     const { groupId, name, description, memberEmails, invitedEmails } =
       req.body;
+
+    if (!validateRequiredField(groupId, "Group ID", res)) return;
+    if (!validateObjectId(groupId, "Group ID", res)) return;
 
     const group = await Group.findById(groupId);
 
@@ -130,26 +150,44 @@ router.patch("/", authMiddleware, async (req: Request, res: Response) => {
 
     // Update name if provided
     if (name !== undefined) {
-      if (name.length > NAME_LENGTH_LIMIT) {
-        res.status(400).json({ message: "Group name is too long" });
+      if (!validateStringLength(name, NAME_LENGTH_LIMIT, "Group name", res))
         return;
-      }
-      group.name = name;
+      group.name = sanitizeString(name);
     }
 
     // Update description if provided
     if (description !== undefined) {
-      if (description.length > DESCRIPTION_LENGTH_LIMIT) {
-        res.status(400).json({ message: "Description is too long" });
+      if (
+        !validateStringLength(
+          description,
+          DESCRIPTION_LENGTH_LIMIT,
+          "Description",
+          res
+        )
+      )
         return;
-      }
-      group.description = description;
+      group.description = sanitizeString(description);
     }
 
     // Update member emails if provided
     if (memberEmails !== undefined) {
       const memberEmailsArray = Array.isArray(memberEmails) ? memberEmails : [];
-      group.memberEmails = memberEmailsArray;
+
+      // Validate all member emails
+      const uniqueMemberEmails = removeDuplicates(
+        memberEmailsArray.map((email: string) => email.toLowerCase())
+      );
+
+      for (const email of uniqueMemberEmails) {
+        if (!validateEmail(email, "Member email", res)) return;
+      }
+
+      // Ensure creator is always in member list
+      if (!uniqueMemberEmails.includes(userEmail.toLowerCase())) {
+        uniqueMemberEmails.push(userEmail.toLowerCase());
+      }
+
+      group.memberEmails = uniqueMemberEmails;
     }
 
     // Update invited emails if provided
@@ -157,7 +195,22 @@ router.patch("/", authMiddleware, async (req: Request, res: Response) => {
       const invitedEmailsArray = Array.isArray(invitedEmails)
         ? invitedEmails
         : [];
-      group.invitedEmails = invitedEmailsArray;
+
+      // Validate all invited emails
+      const uniqueInvitedEmails = removeDuplicates(
+        invitedEmailsArray.map((email: string) => email.toLowerCase())
+      );
+
+      for (const email of uniqueInvitedEmails) {
+        if (!validateEmail(email, "Invited email", res)) return;
+      }
+
+      // Remove emails that are already members
+      const filteredInvitedEmails = uniqueInvitedEmails.filter(
+        (email: string) => !group.memberEmails.includes(email)
+      );
+
+      group.invitedEmails = filteredInvitedEmails;
     }
 
     const totalCount = group.memberEmails.length + group.invitedEmails.length;
@@ -172,11 +225,7 @@ router.patch("/", authMiddleware, async (req: Request, res: Response) => {
 
     res.status(200).json({ message: "Group updated successfully" });
   } catch (error) {
-    console.error(JSON.stringify(error));
-    res.status(500).json({
-      message: "Internal server error",
-      error: JSON.stringify(error),
-    });
+    handleError(error, res);
   }
 });
 
@@ -189,10 +238,8 @@ router.post(
       const userEmail = res.locals.email as string;
       const { id, isAccept } = req.body;
 
-      if (!id) {
-        res.status(400).json({ message: "Group ID is required" });
-        return;
-      }
+      if (!validateRequiredField(id, "Group ID", res)) return;
+      if (!validateObjectId(id, "Group ID", res)) return;
 
       if (isAccept === undefined) {
         res.status(400).json({ message: "isAccept is required" });
@@ -236,11 +283,7 @@ router.post(
         res.status(200).json({ message: "Invitation declined" });
       }
     } catch (error) {
-      console.error(JSON.stringify(error));
-      res.status(500).json({
-        message: "Internal server error",
-        error: JSON.stringify(error),
-      });
+      handleError(error, res);
     }
   }
 );
@@ -250,6 +293,9 @@ router.post("/leave", authMiddleware, async (req: Request, res: Response) => {
   try {
     const userEmail = res.locals.email as string;
     const { groupId } = req.body;
+
+    if (!validateRequiredField(groupId, "Group ID", res)) return;
+    if (!validateObjectId(groupId, "Group ID", res)) return;
 
     const group = await Group.findById(groupId);
 
@@ -284,11 +330,7 @@ router.post("/leave", authMiddleware, async (req: Request, res: Response) => {
 
     res.status(200).json({ message: "Successfully left the group" });
   } catch (error) {
-    console.error(JSON.stringify(error));
-    res.status(500).json({
-      message: "Internal server error",
-      error: JSON.stringify(error),
-    });
+    handleError(error, res);
   }
 });
 
@@ -297,6 +339,9 @@ router.delete("/", authMiddleware, async (req: Request, res: Response) => {
   try {
     const userEmail = res.locals.email as string;
     const { groupId } = req.body;
+
+    if (!validateRequiredField(groupId, "Group ID", res)) return;
+    if (!validateObjectId(groupId, "Group ID", res)) return;
 
     const group = await Group.findById(groupId);
 
@@ -317,11 +362,7 @@ router.delete("/", authMiddleware, async (req: Request, res: Response) => {
 
     res.status(200).json({ message: "Group deleted successfully" });
   } catch (error) {
-    console.error(JSON.stringify(error));
-    res.status(500).json({
-      message: "Internal server error",
-      error: JSON.stringify(error),
-    });
+    handleError(error, res);
   }
 });
 

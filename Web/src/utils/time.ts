@@ -75,3 +75,19 @@ export function isSameDay(date1: Date, date2: Date): boolean {
     date1.getDate() === date2.getDate()
   );
 }
+
+export function formatDate(timestamp: Date): string {
+  const date = new Date(timestamp);
+  return date.toLocaleString();
+}
+
+export function formatUTCTime(date: Date = new Date()): string {
+  const utcHours = String(date.getUTCHours()).padStart(2, "0");
+  const utcMinutes = String(date.getUTCMinutes()).padStart(2, "0");
+  const utcDate = date.getUTCDate();
+  const utcMonth = date.getUTCMonth() + 1;
+  const utcYear = date.getUTCFullYear();
+  return `${utcYear}/${String(utcMonth).padStart(2, "0")}/${String(
+    utcDate
+  ).padStart(2, "0")} ${utcHours}:${utcMinutes} UTC`;
+}

@@ -5,6 +5,15 @@ import Letter from "../models/letter.model";
 import Group from "../models/group.model";
 import { LETTER_LENGTH_LIMIT } from "../config";
 import authMiddleware from "../middlewares/auth";
+import {
+  handleError,
+  validateRequiredField,
+  validateStringLength,
+  validateNonEmptyString,
+  validateEmail,
+  validateObjectId,
+  sanitizeString,
+} from "../utils/general";
 
 const router: Router = express.Router();
 
@@ -36,10 +45,7 @@ router.get("/", authMiddleware, async (req: Request, res: Response) => {
 
     res.status(200).json(results);
   } catch (error) {
-    console.error(JSON.stringify(error));
-    res
-      .status(500)
-      .json({ message: "Internal server error", error: JSON.stringify(error) });
+    handleError(error, res);
   }
 });
 
@@ -50,31 +56,17 @@ router.post("/", authMiddleware, async (req: Request, res: Response) => {
     const { fromGroupId, toEmail, alias, content } = req.body;
 
     // Validate required fields
-    if (!fromGroupId) {
-      res.status(400).json({ message: "fromGroupId is required" });
-      return;
-    }
-
-    if (!toEmail) {
-      res.status(400).json({ message: "toEmail is required" });
-      return;
-    }
-
-    if (!content) {
-      res.status(400).json({ message: "content is required" });
-      return;
-    }
+    if (!validateRequiredField(fromGroupId, "fromGroupId", res)) return;
+    if (!validateObjectId(fromGroupId, "fromGroupId", res)) return;
+    if (!validateRequiredField(toEmail, "toEmail", res)) return;
+    if (!validateEmail(toEmail, "toEmail", res)) return;
+    if (!validateRequiredField(content, "content", res)) return;
 
     // Validate content length
-    if (content.trim().length > LETTER_LENGTH_LIMIT) {
-      res.status(400).json({ message: "Content is too long" });
+    if (!validateStringLength(content, LETTER_LENGTH_LIMIT, "Content", res))
       return;
-    }
 
-    if (content.trim() === "") {
-      res.status(400).json({ message: "Content cannot be empty" });
-      return;
-    }
+    if (!validateNonEmptyString(content, "Content", res)) return;
 
     // Verify that the group exists and user is a member
     const group = await Group.findById(fromGroupId);
@@ -116,9 +108,9 @@ router.post("/", authMiddleware, async (req: Request, res: Response) => {
     const letter = await Letter.create({
       fromEmail,
       fromGroupId,
-      toEmail,
-      alias: alias || "",
-      content: content.trim(),
+      toEmail: toEmail.toLowerCase(),
+      alias: sanitizeString(alias || ""),
+      content: sanitizeString(content),
       timestamp: new Date(),
     });
 
@@ -127,10 +119,7 @@ router.post("/", authMiddleware, async (req: Request, res: Response) => {
       letterId: letter._id,
     });
   } catch (error) {
-    console.error(JSON.stringify(error));
-    res
-      .status(500)
-      .json({ message: "Internal server error", error: JSON.stringify(error) });
+    handleError(error, res);
   }
 });
 

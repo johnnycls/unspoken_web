@@ -11,6 +11,13 @@ import {
   NAME_LENGTH_LIMIT,
 } from "../config";
 import authMiddleware from "../middlewares/auth";
+import {
+  handleError,
+  validateStringLength,
+  validateEmail,
+  sanitizeString,
+  removeDuplicates,
+} from "../utils/general";
 
 const router: Router = express.Router();
 
@@ -33,37 +40,48 @@ async function verifyGoogleToken(token: string) {
 router.post("/login", async (req: Request, res: Response) => {
   try {
     const { credential } = req?.body?.credentials;
-    if (credential) {
-      const verificationResponse = await verifyGoogleToken(credential);
-
-      if (verificationResponse.error) {
-        res.status(400).json({
-          message: verificationResponse.error,
-        });
-        return;
-      }
-
-      const email = verificationResponse?.payload?.email;
-      let user = await User.findOne({ email });
-
-      if (!user) {
-        await User.create({ email });
-      }
-
-      if (JWT_SECRET) {
-        const token = jwt.sign({ email }, JWT_SECRET, {
-          expiresIn: "30d",
-        });
-        res.status(200).json({ token });
-      } else {
-        res.status(500).json("No JWT Secret");
-      }
+    if (!credential) {
+      res.status(400).json({
+        message: "Credential is required",
+      });
+      return;
     }
+
+    const verificationResponse = await verifyGoogleToken(credential);
+
+    if (verificationResponse.error) {
+      res.status(400).json({
+        message: verificationResponse.error,
+      });
+      return;
+    }
+
+    const email = verificationResponse?.payload?.email;
+
+    if (!email) {
+      res.status(400).json({
+        message: "Email not found in credential",
+      });
+      return;
+    }
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = await User.create({ email });
+    }
+
+    if (!JWT_SECRET) {
+      res.status(500).json({ message: "Server configuration error" });
+      return;
+    }
+
+    const token = jwt.sign({ email }, JWT_SECRET, {
+      expiresIn: "30d",
+    });
+    res.status(200).json({ token });
   } catch (error) {
-    console.log(JSON.stringify(error));
-    res
-      .status(500)
-      .json({ message: "Internal server error", error: JSON.stringify(error) });
+    handleError(error, res);
   }
 });
 
@@ -84,10 +102,7 @@ router.get("/", authMiddleware, async (req: Request, res: Response) => {
       lang: user.lang || "",
     });
   } catch (error) {
-    console.error(JSON.stringify(error));
-    res
-      .status(500)
-      .json({ message: "Internal server error", error: JSON.stringify(error) });
+    handleError(error, res);
   }
 });
 
@@ -104,19 +119,19 @@ router.patch("/", authMiddleware, async (req: Request, res: Response) => {
     }
 
     // Update basic profile fields
-    if (name !== undefined && name.length <= NAME_LENGTH_LIMIT)
-      user.name = name;
-    if (lang !== undefined) user.lang = lang;
+    if (name !== undefined) {
+      if (!validateStringLength(name, NAME_LENGTH_LIMIT, "Name", res)) return;
+      user.name = sanitizeString(name);
+    }
+    if (lang !== undefined) {
+      user.lang = sanitizeString(lang);
+    }
 
     await user.save();
 
     res.status(200).json({ message: "Profile updated" });
   } catch (error) {
-    console.error(JSON.stringify(error));
-    res.status(500).json({
-      message: "Internal server error",
-      error: JSON.stringify(error),
-    });
+    handleError(error, res);
   }
 });
 
@@ -135,15 +150,19 @@ router.post(
 
       // Limit the number of emails to prevent abuse
       if (emails.length > MAX_TOTAL_MEMBERS) {
-        res
-          .status(400)
-          .json({
-            message: `Too many emails. Maximum ${MAX_TOTAL_MEMBERS} allowed`,
-          });
+        res.status(400).json({
+          message: `Too many emails. Maximum ${MAX_TOTAL_MEMBERS} allowed`,
+        });
         return;
       }
 
-      const users = await User.find({ email: { $in: emails } }).select(
+      // Validate all emails and remove duplicates
+      const uniqueEmails = removeDuplicates(emails);
+      for (const email of uniqueEmails) {
+        if (!validateEmail(email, "Email", res)) return;
+      }
+
+      const users = await User.find({ email: { $in: uniqueEmails } }).select(
         "email name"
       );
 
@@ -154,11 +173,7 @@ router.post(
 
       res.status(200).json(userMap);
     } catch (error) {
-      console.error(JSON.stringify(error));
-      res.status(500).json({
-        message: "Internal server error",
-        error: JSON.stringify(error),
-      });
+      handleError(error, res);
     }
   }
 );

@@ -9,8 +9,8 @@ export interface ICrush extends Document {
 
 const crushSchema: Schema = new Schema(
   {
-    fromEmail: { type: String, required: true, index: true },
-    toEmail: { type: String, required: true, index: true },
+    fromEmail: { type: String, required: true },
+    toEmail: { type: String, required: true },
     month: { type: String, required: true },
     message: { type: String, default: "" },
   },
@@ -19,7 +19,8 @@ const crushSchema: Schema = new Schema(
   }
 );
 
-// Compound index for finding/updating specific crush records
+// Compound indexes optimized for query patterns
 crushSchema.index({ fromEmail: 1, toEmail: 1, month: 1 });
+crushSchema.index({ fromEmail: 1, month: 1 });
 
 export default mongoose.model<ICrush>("Crush", crushSchema);

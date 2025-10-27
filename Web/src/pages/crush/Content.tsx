@@ -6,7 +6,7 @@ import BottomTab from "../../components/BottomTab";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { Crush } from "../../slices/crushSlice";
-import { getCurrentMonth } from "../../utils/time";
+import { getCurrentMonth, formatUTCTime } from "../../utils/time";
 import { Accordion, AccordionTab } from "primereact/accordion";
 
 const Content: React.FC<{ crushes: Crush[] }> = ({ crushes }) => {
@@ -25,18 +25,6 @@ const Content: React.FC<{ crushes: Crush[] }> = ({ crushes }) => {
 
   const handleUpdateClick = () => {
     navigate("/crush/update");
-  };
-
-  // Format UTC time
-  const formatUTCTime = () => {
-    const utcHours = String(now.getUTCHours()).padStart(2, "0");
-    const utcMinutes = String(now.getUTCMinutes()).padStart(2, "0");
-    const utcDate = now.getUTCDate();
-    const utcMonth = now.getUTCMonth() + 1;
-    const utcYear = now.getUTCFullYear();
-    return `${utcYear}/${String(utcMonth).padStart(2, "0")}/${String(
-      utcDate
-    ).padStart(2, "0")} ${utcHours}:${utcMinutes} UTC`;
   };
 
   return (
@@ -58,7 +46,7 @@ const Content: React.FC<{ crushes: Crush[] }> = ({ crushes }) => {
                   ? t("crush.rules.submissionPeriod")
                   : t("crush.rules.viewingPeriod")}
               </div>
-              <p className="text-xs text-gray-600">{formatUTCTime()}</p>
+              <p className="text-xs text-gray-600">{formatUTCTime(now)}</p>
             </div>
 
             <div className="flex flex-col text-sm mt-2">

@@ -5,6 +5,14 @@ import Crush from "../models/crush.model";
 import { MESSAGE_LENGTH_LIMIT } from "../config";
 import authMiddleware from "../middlewares/auth";
 import { getCurrentMonth } from "../utils/time";
+import {
+  handleError,
+  validateRequiredField,
+  validateStringLength,
+  validateNonEmptyString,
+  validateEmail,
+  sanitizeString,
+} from "../utils/general";
 
 const router: Router = express.Router();
 
@@ -26,20 +34,21 @@ router.post("/", authMiddleware, async (req: Request, res: Response) => {
       return;
     }
 
-    if (!toEmail) {
-      res.status(400).json({ message: "toEmail is required" });
+    if (!validateRequiredField(toEmail, "toEmail", res)) return;
+    if (!validateEmail(toEmail, "toEmail", res)) return;
+
+    // Prevent self-crush
+    if (fromEmail.toLowerCase() === toEmail.toLowerCase()) {
+      res.status(400).json({
+        message: "You cannot create a crush on yourself",
+      });
       return;
     }
 
-    if (message && message.trim().length > MESSAGE_LENGTH_LIMIT) {
-      res.status(400).json({ message: "Message is too long" });
+    if (!validateStringLength(message, MESSAGE_LENGTH_LIMIT, "Message", res))
       return;
-    }
 
-    if (!message || message.trim() === "") {
-      res.status(400).json({ message: "Message cannot be empty" });
-      return;
-    }
+    if (!validateNonEmptyString(message, "Message", res)) return;
 
     // Get current month in YYYY-MM format
     const month = getCurrentMonth(now);
@@ -49,29 +58,26 @@ router.post("/", authMiddleware, async (req: Request, res: Response) => {
 
     if (crush) {
       // Update existing crush
-      crush.toEmail = toEmail;
-      crush.message = message.trim() || "";
+      crush.toEmail = toEmail.toLowerCase();
+      crush.message = sanitizeString(message);
       await crush.save();
     } else {
       // Create new crush
       crush = await Crush.create({
         fromEmail,
-        toEmail,
+        toEmail: toEmail.toLowerCase(),
         month,
-        message: message.trim() || "",
+        message: sanitizeString(message),
       });
     }
 
     res.status(200).json({ message: "Crush saved successfully" });
   } catch (error) {
-    console.error(JSON.stringify(error));
-    res
-      .status(500)
-      .json({ message: "Internal server error", error: JSON.stringify(error) });
+    handleError(error, res);
   }
 });
 
-// Get all crush records where user is the sender
+// Get the crush record where user is the sender for the current month
 router.get("/", authMiddleware, async (req: Request, res: Response) => {
   try {
     const userEmail = res.locals.email as string;
@@ -83,48 +89,40 @@ router.get("/", authMiddleware, async (req: Request, res: Response) => {
     const currentMonth = getCurrentMonth(now);
 
     // Get crushes where user is the sender for current month only
-    const crushes = await Crush.find({
+    const crush = await Crush.findOne({
       fromEmail: userEmail,
       month: currentMonth,
     });
 
+    if (!crush) {
+      res.status(200).json(null);
+      return;
+    }
+
     // For days 1-14, return data without checking for mutual crushes
     if (!canViewResponses) {
-      const results = crushes.map((crush) => ({
+      res.status(200).json({
         toEmail: crush.toEmail,
         message: crush.message,
         month: crush.month,
         responseMessage: "",
-      }));
-      res.status(200).json(results);
+      });
       return;
     }
 
     // For days 15-31, check for mutual crushes
-    const results = await Promise.all(
-      crushes.map(async (crush) => {
-        // Find if recipient has also crushed on the user in the same month
-        const mutualCrush = await Crush.findOne({
-          fromEmail: crush.toEmail,
-          toEmail: userEmail,
-          month: crush.month,
-        });
+    const mutualCrush = await Crush.findOne({
+      fromEmail: crush.toEmail,
+      toEmail: userEmail,
+      month: crush.month,
+    });
 
-        return {
-          toEmail: crush.toEmail,
-          message: crush.message,
-          month: crush.month,
-          responseMessage: mutualCrush ? mutualCrush.message : "",
-        };
-      })
-    );
-
-    res.status(200).json(results);
+    res.status(200).json({
+      ...crush,
+      responseMessage: mutualCrush ? mutualCrush.message : "",
+    });
   } catch (error) {
-    console.error(JSON.stringify(error));
-    res
-      .status(500)
-      .json({ message: "Internal server error", error: JSON.stringify(error) });
+    handleError(error, res);
   }
 });
 
@@ -162,10 +160,7 @@ router.delete("/", authMiddleware, async (req: Request, res: Response) => {
 
     res.status(200).json({ message: "Crush deleted successfully" });
   } catch (error) {
-    console.error(JSON.stringify(error));
-    res
-      .status(500)
-      .json({ message: "Internal server error", error: JSON.stringify(error) });
+    handleError(error, res);
   }
 });
 

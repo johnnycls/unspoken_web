@@ -8,7 +8,7 @@ export interface IUser extends Document {
 
 const userSchema: Schema = new Schema(
   {
-    email: { type: String, required: true, unique: true, index: true },
+    email: { type: String, required: true, unique: true },
     name: { type: String, default: "" },
     lang: { type: String, default: "" },
   },
