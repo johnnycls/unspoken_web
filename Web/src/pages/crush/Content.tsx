@@ -6,10 +6,10 @@ import BottomTab from "../../components/BottomTab";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { Crush } from "../../slices/crushSlice";
-import { getCurrentMonth, formatUTCTime } from "../../utils/time";
+import { formatUTCTime } from "../../utils/time";
 import { Accordion, AccordionTab } from "primereact/accordion";
 
-const Content: React.FC<{ crushes: Crush[] }> = ({ crushes }) => {
+const Content: React.FC<{ crush: Crush | null }> = ({ crush }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -18,10 +18,6 @@ const Content: React.FC<{ crushes: Crush[] }> = ({ crushes }) => {
   const dayOfMonth = now.getDate();
   const isSubmissionPeriod = dayOfMonth <= 14; // Days 1-14
   const isViewingPeriod = !isSubmissionPeriod; // Days 15-31
-
-  // Get current month crush
-  const currentMonth = getCurrentMonth(now);
-  const currentCrush = crushes.find((crush) => crush.month === currentMonth);
 
   const handleUpdateClick = () => {
     navigate("/crush/update");
@@ -62,7 +58,7 @@ const Content: React.FC<{ crushes: Crush[] }> = ({ crushes }) => {
         </Accordion>
 
         <Card>
-          {!currentCrush ? (
+          {!crush ? (
             <div className="flex flex-col items-center justify-center gap-4">
               {isSubmissionPeriod
                 ? t("crush.noCrushYet")
@@ -79,16 +75,16 @@ const Content: React.FC<{ crushes: Crush[] }> = ({ crushes }) => {
               <h3 className="font-semibold mb-2">
                 {t("crush.yourCrushName")}:
               </h3>
-              <p className="text-lg mb-3">{currentCrush.toEmail}</p>
+              <p className="text-lg mb-3">{crush.toEmail}</p>
 
               <h3 className="font-semibold mb-2">{t("crush.yourMessage")}:</h3>
-              <p className="mb-2">{currentCrush.message}</p>
-              <p className="text-sm text-gray-500">{currentCrush.month}</p>
+              <p className="mb-2">{crush.message}</p>
+              <p className="text-sm text-gray-500">{crush.month}</p>
 
-              {isViewingPeriod && currentCrush.responseMessage && (
+              {isViewingPeriod && crush.responseMessage && (
                 <>
                   {t("crush.theyLikeYouToo")}
-                  <p className="mb-2">{currentCrush.responseMessage}</p>
+                  <p className="mb-2">{crush.responseMessage}</p>
                 </>
               )}
 

@@ -12,13 +12,10 @@ export const groupMembers = ({
   invitedEmails,
 }: GroupMembersProps): Member[] => {
   return [
-    { email: creatorEmail, role: "creator" as const },
-    ...memberEmails
-      .filter((email) => email !== creatorEmail)
-      .map((email) => ({
-        email,
-        role: "member" as const,
-      })),
+    ...memberEmails.map((email) => ({
+      email,
+      role: email === creatorEmail ? ("creator" as const) : ("member" as const),
+    })),
     ...invitedEmails.map((email) => ({
       email,
       role: "invited" as const,

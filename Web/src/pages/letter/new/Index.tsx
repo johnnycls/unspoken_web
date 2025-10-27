@@ -28,7 +28,18 @@ const NewLetter: React.FC = () => {
     refetch: refetchProfile,
   } = useGetProfileQuery();
 
-  if (isErrorGroups || isErrorLetters || isProfileError) {
+  if (isLoadingGroups || isLoadingLetters || isProfileLoading) {
+    return <LoadingScreen isLoading={true} />;
+  }
+
+  if (
+    isErrorGroups ||
+    isErrorLetters ||
+    isProfileError ||
+    !profile ||
+    groups === undefined ||
+    letters === undefined
+  ) {
     return (
       <Error
         onReload={() => {
@@ -41,17 +52,7 @@ const NewLetter: React.FC = () => {
     );
   }
 
-  if (isLoadingGroups || isLoadingLetters || isProfileLoading) {
-    return <LoadingScreen isLoading={true} />;
-  }
-
-  return (
-    <Content
-      groups={groups || []}
-      letters={letters || []}
-      profile={profile || null}
-    />
-  );
+  return <Content groups={groups} letters={letters} profile={profile} />;
 };
 
 export default NewLetter;

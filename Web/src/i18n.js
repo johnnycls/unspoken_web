@@ -130,6 +130,7 @@ i18n
           memberAlreadyInGroup: "Member already in group",
           invalidEmail: "Invalid email address",
           // Crush messages
+          invalidForm: "Please fill out the form correctly",
           fetchCrushesError: "Failed to load crushes",
           updateCrushSuccess: "Crush updated successfully",
           updateCrushError: "Failed to update crush",
@@ -150,14 +151,17 @@ i18n
             content: "Content",
             contentPlaceholder: "Write your letter...",
             acknowledgment:
-              "I acknowledge that I can only send 1 letter per day, and cannot modify it after sending",
+              "I acknowledge that I can only send 2 letters per day, and cannot modify it after sending",
             cannotSendYet:
-              "You have already sent a letter today. Please try again tomorrow.",
+              "You have already sent 2 letters today. Please try again tomorrow.",
             sendLetter: "Send Letter",
             to: "To",
+            fromGroup: "From Group",
+            deletedGroup: "Deleted Group",
             sendSuccess: "Letter sent successfully",
             sendError: "Failed to send letter",
-            updateReminder: "Letters are updated daily at 00:00 UTC",
+            updateReminder:
+              "Letters are updated daily at 00:00 UTC and 12:00 UTC",
           },
           // Letter messages
           fetchLettersError: "Failed to load letters",
@@ -268,6 +272,7 @@ i18n
           memberAlreadyInGroup: "該成員已在羣組中",
           invalidEmail: "無效的電子郵件地址",
           // Crush messages
+          invalidForm: "請正確填寫表單",
           fetchCrushesError: "載入暗戀對象失敗",
           updateCrushSuccess: "暗戀對象更新成功",
           updateCrushError: "暗戀對象更新失敗",
@@ -287,13 +292,15 @@ i18n
             aliasPlaceholder: "你的別名（寄件人名稱）",
             content: "內容",
             contentPlaceholder: "寫下你的信件...",
-            acknowledgment: "我了解每天只能寄出1封信，且寄出後無法修改",
-            cannotSendYet: "你今天已經寄出一封信了，請明天再試。",
+            acknowledgment: "我了解每天只能寄出兩封信，且寄出後無法修改",
+            cannotSendYet: "你今天已經寄出兩封信了，請明天再試。",
             sendLetter: "寄出信件",
             to: "收件人",
+            fromGroup: "來自羣組",
+            deletedGroup: "已刪除的羣組",
             sendSuccess: "信件寄出成功",
             sendError: "信件寄出失敗",
-            updateReminder: "信件會在每天 UTC 時間 00:00 更新",
+            updateReminder: "信件會在每天UTC時間00:00和12:00更新",
           },
           // Letter messages
           fetchLettersError: "載入信件失敗",

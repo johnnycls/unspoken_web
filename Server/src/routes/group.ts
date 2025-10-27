@@ -101,9 +101,9 @@ router.post("/", authMiddleware, async (req: Request, res: Response) => {
     }
 
     // Remove creator from invited emails if present
-    const filteredInvitedEmails = uniqueInvitedEmails.filter(
-      (email: string) => email !== userEmail.toLowerCase()
-    );
+    const filteredInvitedEmails = uniqueInvitedEmails
+      .filter((email: string) => email !== userEmail.toLowerCase())
+      .map((email) => email.trim());
 
     // Creator is automatically a member
     const group = await Group.create({
@@ -175,7 +175,7 @@ router.patch("/", authMiddleware, async (req: Request, res: Response) => {
 
       // Validate all member emails
       const uniqueMemberEmails = removeDuplicates(
-        memberEmailsArray.map((email: string) => email.toLowerCase())
+        memberEmailsArray.map((email: string) => email.toLowerCase().trim())
       );
 
       for (const email of uniqueMemberEmails) {

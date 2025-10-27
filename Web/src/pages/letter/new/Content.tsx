@@ -32,12 +32,15 @@ const Content: React.FC<{
   const [content, setContent] = useState("");
   const [acknowledged, setAcknowledged] = useState(false);
 
-  const last_written_letter = letters.find((l) => l.toEmail !== profile?.email);
+  const last_written_letters = letters.filter(
+    (l) => l.toEmail !== profile?.email
+  );
 
   // Get last letter's alias if any
   useEffect(() => {
-    if (last_written_letter) {
-      setAlias(last_written_letter.alias);
+    if (last_written_letters.length === 0) return;
+    {
+      setAlias(last_written_letters[last_written_letters.length - 1].alias);
     }
   }, [letters]);
 
@@ -48,25 +51,31 @@ const Content: React.FC<{
 
   // Check if can send (1 letter per day limit)
   const canSendToday = () => {
-    if (!last_written_letter) return true;
+    if (last_written_letters.length <= 1) return true;
 
-    const lastLetterDate = new Date(last_written_letter.timestamp);
+    const lastLetterDate = new Date(
+      last_written_letters[last_written_letters.length - 2].timestamp
+    );
     const now = new Date();
     return !isSameDay(lastLetterDate, now);
   };
 
   // Get available users from selected group
   const availableUsers = selectedGroup
-    ? selectedGroup.memberEmails.map((email) => ({
-        label: email,
-        value: email,
-      }))
+    ? selectedGroup.memberEmails
+        .filter((email) => email !== profile?.email)
+        .map((email) => ({
+          label: email,
+          value: email,
+        }))
     : [];
 
-  const groupOptions = groups.map((group) => ({
-    label: group.name,
-    value: group,
-  }));
+  const groupOptions = groups
+    .filter((group) => group.memberEmails.length > 1)
+    .map((group) => ({
+      label: group.name,
+      value: group,
+    }));
 
   const isFormValid = () => {
     return (
@@ -196,22 +205,21 @@ const Content: React.FC<{
           </div>
 
           {/* Warning if can't send today */}
-          {!canSendToday && (
+          {canSendToday() ? (
+            <Button
+              label={t("letter.sendLetter")}
+              onClick={handleSubmit}
+              disabled={!isFormValid() || isSending}
+              loading={isSending}
+              className="mt-4"
+            />
+          ) : (
             <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md">
               <p className="text-sm text-yellow-800">
                 {t("letter.cannotSendYet")}
               </p>
             </div>
           )}
-
-          {/* Send Button */}
-          <Button
-            label={t("letter.sendLetter")}
-            onClick={handleSubmit}
-            disabled={!isFormValid() || isSending}
-            loading={isSending}
-            className="mt-4"
-          />
         </Card>
       </div>
     </div>

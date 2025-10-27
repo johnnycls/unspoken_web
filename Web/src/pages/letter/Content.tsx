@@ -6,7 +6,7 @@ import BottomTab from "../../components/BottomTab";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { Letter } from "../../slices/letterSlice";
-import { formatDate } from "../../utils/time";
+import { formatDate, formatUTCTime } from "../../utils/time";
 import { getPreviewContent } from "../../utils/general";
 
 const Content: React.FC<{ letters: Letter[] }> = ({ letters }) => {
@@ -37,6 +37,9 @@ const Content: React.FC<{ letters: Letter[] }> = ({ letters }) => {
       <div className="w-full h-full flex flex-col p-4 gap-4 overflow-y-auto">
         <Card>
           <p className="text-center">{t("letter.updateReminder")}</p>
+          <p className="text-gray-500 text-right text-xs">
+            {formatUTCTime(new Date())}
+          </p>
         </Card>
         {letters.length === 0 ? (
           <Card>
@@ -54,16 +57,17 @@ const Content: React.FC<{ letters: Letter[] }> = ({ letters }) => {
               key={index}
               className="cursor-pointer"
               onClick={() => handleLetterClick(index)}
-            >
-              <div className="flex flex-col gap-2">
-                <h3 className="font-semibold text-lg">{letter.alias}</h3>
-                <span className="text-sm text-gray-500">
+              title={letter.alias}
+              footer={
+                <p className="text-gray-600 text-right text-xs">
                   {formatDate(letter.timestamp)}
-                </span>
-                <p className="text-gray-600">
-                  {getPreviewContent(letter.content)}
                 </p>
-              </div>
+              }
+              pt={{ body: { className: "gap-0!" } }}
+            >
+              <p className="text-gray-500">
+                {getPreviewContent(letter.content)}
+              </p>
             </Card>
           ))
         )}

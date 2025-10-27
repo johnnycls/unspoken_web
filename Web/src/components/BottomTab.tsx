@@ -17,8 +17,9 @@ const BottomTab: React.FC<{ activeIndex: number }> = ({ activeIndex }) => {
       <TabMenu
         className="w-full"
         pt={{
-          menu: { className: "justify-between" },
-          icon: { className: "!text-xl" },
+          menu: { className: "justify-around" },
+          action: { className: "!p-3" },
+          icon: { className: "!text-xl !m-0" },
         }}
         model={items}
         activeIndex={activeIndex}

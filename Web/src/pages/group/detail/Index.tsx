@@ -123,16 +123,18 @@ const GroupDetail: React.FC = () => {
   }, [isDeleteError, t]);
 
   const group = groups?.find((g) => g.id === groupId);
+  const userEmail = profile?.email || "";
 
   const allMembers = groupMembers({
     creatorEmail: group?.creatorEmail || "",
     memberEmails: group?.memberEmails || [],
     invitedEmails: group?.invitedEmails || [],
   });
-
   const allEmails = allMembers.map((m) => m.email);
+
   const {
     data: userNames,
+    isLoading: isUserNamesLoading,
     isError: isUserNamesError,
     refetch: refetchUserNames,
   } = useGetUsersByEmailsQuery(
@@ -160,8 +162,6 @@ const GroupDetail: React.FC = () => {
     return <LoadingScreen isLoading={true} />;
   }
 
-  const userEmail = profile?.email || "";
-
   const handleAcceptInvitation = () => {
     respondToInvitation({ id: group.id, isAccept: true });
   };
@@ -183,7 +183,12 @@ const GroupDetail: React.FC = () => {
       <Toast ref={toast} />
       <ConfirmDialog />
       <LoadingScreen
-        isLoading={isRespondLoading || isLeaveLoading || isDeleteLoading}
+        isLoading={
+          isRespondLoading ||
+          isLeaveLoading ||
+          isDeleteLoading ||
+          isUserNamesLoading
+        }
       />
 
       <GroupDetailContent

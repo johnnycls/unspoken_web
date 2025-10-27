@@ -5,8 +5,12 @@ import AppBar from "../../../components/AppBar";
 import { Card } from "primereact/card";
 import { Letter } from "../../../slices/letterSlice";
 import { formatDate } from "../../../utils/time";
+import { Group } from "../../../slices/groupSlice";
 
-const Content: React.FC<{ letter: Letter }> = ({ letter }) => {
+const Content: React.FC<{ letter: Letter; groups: Group[] }> = ({
+  letter,
+  groups,
+}) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -21,24 +25,25 @@ const Content: React.FC<{ letter: Letter }> = ({ letter }) => {
       </AppBar>
 
       <div className="w-full h-full flex flex-col p-4 gap-4 overflow-y-auto">
-        <Card>
-          <div className="flex flex-col gap-4">
-            <div className="flex justify-between items-center border-b pb-2">
-              <h3 className="font-semibold text-lg">{letter.alias}</h3>
-              <span className="text-sm text-gray-500">
-                {formatDate(letter.timestamp)}
-              </span>
-            </div>
-
-            <div className="whitespace-pre-wrap text-gray-700">
-              {letter.content}
-            </div>
-
-            <div className="border-t pt-2 text-sm text-gray-500">
+        <Card
+          pt={{ title: { className: "m-0!" } }}
+          title={letter.alias}
+          footer={
+            <div className="text-sm text-gray-500">
               <p>
                 {t("letter.to")}: {letter.toEmail}
+                <br />
+                {t("letter.fromGroup")}:{" "}
+                {groups.find((g) => g.id === letter.fromGroupId)?.name ||
+                  t("letter.deletedGroup")}
+                <br />
+                {formatDate(letter.timestamp)}
               </p>
             </div>
+          }
+        >
+          <div className="flex flex-col gap-4">
+            <div className="whitespace-pre-wrap">{letter.content}</div>
           </div>
         </Card>
       </div>

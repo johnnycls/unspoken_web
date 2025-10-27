@@ -22,16 +22,19 @@ router.get("/", authMiddleware, async (req: Request, res: Response) => {
   try {
     const userEmail = res.locals.email as string;
 
-    // Calculate start of today (00:00:00)
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    const halfwayToday = new Date();
+    halfwayToday.setHours(12, 0, 0, 0);
 
     // Find all letters where user is either sender or recipient
-    // and letter was sent before today (yesterday or earlier)
     const letters = await Letter.find({
       $or: [
         { fromEmail: userEmail },
-        { toEmail: userEmail, timestamp: { $lt: today } },
+        {
+          toEmail: userEmail,
+          timestamp: { $lt: new Date() > halfwayToday ? halfwayToday : today },
+        },
       ],
     }).sort({ timestamp: -1 });
 
@@ -61,6 +64,10 @@ router.post("/", authMiddleware, async (req: Request, res: Response) => {
     if (!validateRequiredField(toEmail, "toEmail", res)) return;
     if (!validateEmail(toEmail, "toEmail", res)) return;
     if (!validateRequiredField(content, "content", res)) return;
+    if (fromEmail.toLowerCase() === toEmail.toLowerCase()) {
+      res.status(400).json({ message: "You cannot send a letter to yourself" });
+      return;
+    }
 
     // Validate content length
     if (!validateStringLength(content, LETTER_LENGTH_LIMIT, "Content", res))
@@ -97,9 +104,9 @@ router.post("/", authMiddleware, async (req: Request, res: Response) => {
       },
     });
 
-    if (lettersToday >= 1) {
+    if (lettersToday >= 2) {
       res.status(429).json({
-        message: "You can only send 1 letter per day",
+        message: "You can only send 2 letters per day",
       });
       return;
     }

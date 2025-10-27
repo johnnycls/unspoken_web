@@ -80,15 +80,20 @@ const GroupForm: React.FC = () => {
   const {
     data: oldUserNames,
     isError: fetchUserNamesError,
+    isLoading: isUserNamesLoading,
     refetch: refetchUserNames,
   } = useGetUsersByEmailsQuery(
     { emails: allOldEmails },
-    { skip: allOldEmails.length === 0 }
+    { skip: allOldEmails.length <= 1 }
   );
   const [fetchUserName, { isLoading: isNewUserNameLoading }] =
     useLazyGetUsersByEmailsQuery();
 
-  const userNames = { ...oldUserNames, ...newUserNames };
+  const userNames = {
+    ...(profile ? { [profile.email]: profile.name } : {}),
+    ...oldUserNames,
+    ...newUserNames,
+  };
   const allMembers = groupMembers({
     creatorEmail: creatorEmail,
     memberEmails: memberEmails,
@@ -102,14 +107,14 @@ const GroupForm: React.FC = () => {
       setCreatorEmail(group.creatorEmail);
       setMemberEmails(group.memberEmails);
       setInvitedEmails(group.invitedEmails);
-    } else if (!isEditMode) {
+    } else if (!isEditMode && profile) {
       setName("");
       setDescription("");
-      setCreatorEmail(profile?.email || "");
+      setCreatorEmail(profile.email);
       setMemberEmails([]);
       setInvitedEmails([]);
     }
-  }, [isEditMode, group]);
+  }, [isEditMode, group, profile]);
 
   useEffect(() => {
     if (isCreateSuccess || isUpdateSuccess) {
@@ -300,7 +305,12 @@ const GroupForm: React.FC = () => {
     <div className="w-full h-full flex flex-col">
       <Toast ref={toast} />
       <LoadingScreen
-        isLoading={isCreateLoading || isUpdateLoading || isNewUserNameLoading}
+        isLoading={
+          isCreateLoading ||
+          isUpdateLoading ||
+          isUserNamesLoading ||
+          isNewUserNameLoading
+        }
       />
 
       <GroupFormContent

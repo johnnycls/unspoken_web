@@ -13,11 +13,10 @@ import {
   useDeleteCrushMutation,
 } from "../../../slices/crushSlice";
 import { validateEmail } from "../../../utils/validation";
-import { getCurrentMonth } from "../../../utils/time";
 import { ToggleButton } from "primereact/togglebutton";
 import { Card } from "primereact/card";
 
-const Content: React.FC<{ crushes: Crush[] }> = ({ crushes }) => {
+const Content: React.FC<{ crush: Crush | null }> = ({ crush }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toast = React.useRef<Toast>(null);
@@ -26,32 +25,40 @@ const Content: React.FC<{ crushes: Crush[] }> = ({ crushes }) => {
     useCreateOrUpdateCrushMutation();
   const [deleteCrush, { isLoading: isDeleting }] = useDeleteCrushMutation();
 
-  // Get current month crush
-  const now = new Date();
-  const currentMonth = getCurrentMonth(now);
-  const currentCrush = crushes.find((crush) => crush.month === currentMonth);
-
-  const [hasCrush, setHasCrush] = useState(!!currentCrush);
-  const [email, setEmail] = useState(currentCrush?.toEmail || "");
-  const [message, setMessage] = useState(currentCrush?.message || "");
+  const [hasCrush, setHasCrush] = useState(!!crush);
+  const [email, setEmail] = useState(crush?.toEmail || "");
+  const [message, setMessage] = useState(crush?.message || "");
 
   useEffect(() => {
-    if (currentCrush) {
+    if (crush) {
       setHasCrush(true);
-      setEmail(currentCrush.toEmail);
-      setMessage(currentCrush.message);
+      setEmail(crush.toEmail);
+      setMessage(crush.message);
+    } else {
+      setHasCrush(false);
+      setEmail("");
+      setMessage("");
     }
-  }, [currentCrush]);
+  }, [crush]);
 
   const isFormValid = () => {
-    if (!hasCrush) return currentCrush !== undefined;
+    if (!hasCrush) return true;
     return email.trim() !== "" && validateEmail(email) && message.trim() !== "";
   };
 
   const handleSubmit = async () => {
+    if (!isFormValid()) {
+      toast.current?.show({
+        severity: "error",
+        summary: t("invalidForm"),
+        life: 3000,
+      });
+      return;
+    }
+
     // Handle removing crush
     if (!hasCrush) {
-      if (!currentCrush) {
+      if (!crush) {
         navigate("/crush");
         return;
       }
@@ -75,8 +82,6 @@ const Content: React.FC<{ crushes: Crush[] }> = ({ crushes }) => {
       return;
     }
 
-    if (!isFormValid()) return;
-
     try {
       await createOrUpdateCrush({
         toEmail: email.trim(),
@@ -88,10 +93,7 @@ const Content: React.FC<{ crushes: Crush[] }> = ({ crushes }) => {
         summary: t("updateCrushSuccess"),
         life: 3000,
       });
-
-      setTimeout(() => {
-        navigate("/crush");
-      }, 1000);
+      navigate("/crush");
     } catch (error: any) {
       toast.current?.show({
         severity: "error",

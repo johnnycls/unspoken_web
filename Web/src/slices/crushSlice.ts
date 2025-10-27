@@ -14,7 +14,7 @@ export type Crush = {
 
 const crushSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getCrushes: builder.query<Crush | null, void>({
+    getCrush: builder.query<Crush | null, void>({
       query: () => ({
         url: "crush/",
       }),
@@ -77,7 +77,7 @@ const crushSlice = apiSlice.injectEndpoints({
 });
 
 export const {
-  useGetCrushesQuery,
+  useGetCrushQuery,
   useCreateOrUpdateCrushMutation,
   useDeleteCrushMutation,
 } = crushSlice;
