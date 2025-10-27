@@ -118,7 +118,7 @@ const Content: React.FC<{ crush: Crush | null }> = ({ crush }) => {
 
       <div className="w-full h-full flex p-4 overflow-y-auto justify-center items-center">
         <Card
-          className="w-[90%]"
+          className="w-full max-h-full overflow-y-auto"
           pt={{ content: { className: "flex flex-col gap-4" } }}
         >
           <ToggleButton

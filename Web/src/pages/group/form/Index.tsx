@@ -111,7 +111,7 @@ const GroupForm: React.FC = () => {
       setName("");
       setDescription("");
       setCreatorEmail(profile.email);
-      setMemberEmails([]);
+      setMemberEmails([profile.email]);
       setInvitedEmails([]);
     }
   }, [isEditMode, group, profile]);

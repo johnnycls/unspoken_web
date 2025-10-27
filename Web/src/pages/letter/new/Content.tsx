@@ -132,8 +132,11 @@ const Content: React.FC<{
         <h1 className="text-2xl">{t("letter.newLetter")}</h1>
       </AppBar>
 
-      <div className="w-full h-full flex p-4">
-        <Card pt={{ content: { className: "flex flex-col gap-4" } }}>
+      <div className="w-full h-full flex overflow-y-auto p-4">
+        <Card
+          className="w-full h-full overflow-y-auto"
+          pt={{ content: { className: "flex flex-col gap-4" } }}
+        >
           {/* Group Dropdown */}
           <div className="flex flex-col">
             <label htmlFor="group" className="font-semibold">

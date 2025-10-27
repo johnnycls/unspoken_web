@@ -46,6 +46,7 @@ const MemberCard: React.FC<MemberCardProps> = ({
           {showRemoveButton && onRemove && (
             <Button
               icon="pi pi-minus"
+              className="p-0!"
               text
               severity="danger"
               onClick={onRemove}

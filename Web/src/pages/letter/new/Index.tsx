@@ -6,9 +6,12 @@ import { useGetGroupsQuery } from "../../../slices/groupSlice";
 import { useGetLettersQuery } from "../../../slices/letterSlice";
 import Error from "../../../components/Error";
 import { useGetProfileQuery } from "../../../slices/userSlice";
+import { useNavigate } from "react-router";
 
 const NewLetter: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
   const {
     data: groups,
     isLoading: isLoadingGroups,
@@ -50,6 +53,10 @@ const NewLetter: React.FC = () => {
         errorText={t("fetchDataError")}
       />
     );
+  }
+
+  if (profile.email !== "" && (profile.name === "" || profile.lang === "")) {
+    navigate("/settings");
   }
 
   return <Content groups={groups} letters={letters} profile={profile} />;

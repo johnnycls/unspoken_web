@@ -65,7 +65,15 @@ const GroupFormContent: React.FC<GroupFormContentProps> = ({
       </AppBar>
 
       <div className="w-full h-full flex overflow-y-auto p-4 justify-center items-center">
-        <Card pt={{ content: { className: "w-full flex flex-col gap-4" } }}>
+        <Card
+          className="w-full max-h-full"
+          pt={{
+            content: {
+              className: "w-full flex flex-col gap-4",
+            },
+            root: { className: "overflow-y-auto" },
+          }}
+        >
           <GroupInfoForm
             name={name}
             description={description}
