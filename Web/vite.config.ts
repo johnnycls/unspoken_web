@@ -7,8 +7,8 @@ const manifestForPlugIn: Partial<VitePWAOptions> = {
   registerType: "autoUpdate",
   includeAssets: ["favicon.ico", "apple-touc-icon.png", "masked-icon.svg"],
   manifest: {
-    name: "Nookio",
-    short_name: "Nookio",
+    name: "Unspoken",
+    short_name: "Unspoken",
     description: "",
     theme_color: "#ffffff",
     background_color: "#ffffff",
