@@ -110,7 +110,7 @@ const Content: React.FC<{ crush: Crush | null }> = ({ crush }) => {
 
   return (
     <div className="w-full h-full flex flex-col">
-      <Toast ref={toast} />
+      <Toast position="top-right" ref={toast} />
 
       <AppBar onBack={handleBack}>
         <h1 className="text-2xl">{t("crush.updateCrush")}</h1>

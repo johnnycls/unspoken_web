@@ -303,7 +303,7 @@ const GroupForm: React.FC = () => {
 
   return (
     <div className="w-full h-full flex flex-col">
-      <Toast ref={toast} />
+      <Toast position="top-right" ref={toast} />
       <LoadingScreen
         isLoading={
           isCreateLoading ||

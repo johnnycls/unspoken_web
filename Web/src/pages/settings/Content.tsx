@@ -55,7 +55,7 @@ const Content: React.FC<{ profile?: profile }> = ({ profile }) => {
 
   return (
     <div className="w-full h-full flex flex-col justify-between">
-      <Toast ref={toast} />
+      <Toast position="top-right" ref={toast} />
       <LoadingScreen isLoading={isLoading} />
 
       <AppBar>
@@ -96,7 +96,7 @@ const Content: React.FC<{ profile?: profile }> = ({ profile }) => {
         onSave={handleLangSave}
       />
 
-      {profile?.name && profile?.lang && <BottomTab activeIndex={3} />}
+      {<BottomTab activeIndex={3} />}
     </div>
   );
 };

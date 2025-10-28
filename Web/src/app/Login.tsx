@@ -51,7 +51,7 @@ const Login: React.FC<{}> = ({}) => {
 
   return (
     <div className="flex flex-col items-center justify-center h-full w-full">
-      <Toast ref={toast} />
+      <Toast position="top-right" ref={toast} />
       <LoadingScreen isLoading={isLoading || isLoginLoading} />
       <GoogleLogin
         use_fedcm_for_prompt
