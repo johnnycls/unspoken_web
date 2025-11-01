@@ -54,7 +54,7 @@ router.post("/", authMiddleware, async (req: Request, res: Response) => {
     const month = getCurrentMonth(now);
 
     // Find existing crush for this month
-    let crush = await Crush.findOne({ fromEmail, toEmail, month });
+    let crush = await Crush.findOne({ fromEmail, month });
 
     if (crush) {
       // Update existing crush
