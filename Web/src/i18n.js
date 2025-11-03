@@ -88,7 +88,7 @@ i18n
               "No Crush Entered, Please Enter During Submission Period (Days 1-14).",
             updateStatus: "Update Status",
             updateCrush: "Update Crush",
-            yourCrushName: "Your Crush Name",
+            yourCrushEmail: "Your Crush Email",
             yourMessage: "Your Message",
             heLikesYouToo: "He/She Likes You Too, He/She Said:",
             heDoesntLikeYou:
@@ -106,10 +106,10 @@ i18n
               viewingPeriod: "Viewing Period (Days 15-31)",
               days1to14: "Days 1-14: Submission Period",
               days1to14Desc:
-                "You can create or update your crush and message. Response messages are hidden during this period.",
+                "You can create or update your crush and message. Your crush won't know what you wrote unless he/she enters your email in the crush field. Response messages are hidden during this period.",
               days15to31: "Days 15-31: Viewing Period",
               days15to31Desc:
-                "View if your crush likes you back! You cannot modify your submission during this period.",
+                "View if your crush likes you back! Only if both sides leave messages will you see each other's messages. You cannot modify your submission during this period.",
             },
           },
           // Profile update messages
@@ -232,7 +232,7 @@ i18n
               "沒有填寫暗戀對象，如有暗戀對象，請在下次填寫期間（1-14日）填寫。",
             updateStatus: "更新狀態",
             updateCrush: "更新暗戀對象",
-            yourCrushName: "你的暗戀對象",
+            yourCrushEmail: "你的暗戀對象的電子郵件",
             yourMessage: "你的留言",
             heLikesYouToo: "對方也喜歡你，他/她說：",
             heDoesntLikeYou:
@@ -250,10 +250,10 @@ i18n
               viewingPeriod: "查看期間（15-31日）",
               days1to14: "1-14日：填寫期間",
               days1to14Desc:
-                "可以填寫或修改你的暗戀對象和留言。此期間無法查看對方的回應。",
+                "可以填寫或修改你的暗戀對象和留言。若對方填寫的人不是你，對方不會知道你填寫的人是誰和留言。此期間無法查看對方的回應。",
               days15to31: "15-31日：查看期間",
               days15to31Desc:
-                "可以查看對方是否也喜歡你！此期間無法修改你的填寫內容。",
+                "可以查看對方是否也喜歡你！只有雙方都給對方留言，才會看到對方的留言。此期間無法修改你的填寫內容。",
             },
           },
           // Profile update messages
