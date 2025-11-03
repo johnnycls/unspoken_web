@@ -84,13 +84,13 @@ const Content: React.FC<{ crush: Crush | null }> = ({ crush }) => {
                 (crush.responseMessage ? (
                   <>
                     <h3 className="font-semibold mb-2">
-                      {t("crush.heLikesYouToo")}:
+                      {t("crush.heLikesYouToo")}
                     </h3>
                     <p className="mb-2">{crush.responseMessage}</p>
                   </>
                 ) : (
                   <h3 className="font-semibold mb-2">
-                    {t("crush.heDoesntLikeYou")}:
+                    {t("crush.heDoesntLikeYou")}
                   </h3>
                 ))}
 
