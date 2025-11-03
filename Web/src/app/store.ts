@@ -2,9 +2,11 @@ import { combineReducers } from "redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { apiSlice } from "../slices/apiSlice";
+import toastReducer from "../slices/toastSlice";
 
 const rootReducer = combineReducers({
   [apiSlice.reducerPath]: apiSlice.reducer,
+  toast: toastReducer,
 });
 
 export const store = configureStore({

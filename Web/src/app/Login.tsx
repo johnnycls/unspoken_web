@@ -3,14 +3,15 @@ import useLogin from "../hooks/useLogin";
 import { useTranslation } from "react-i18next";
 import LoadingScreen from "../components/LoadingScreen";
 import { GoogleLogin } from "@react-oauth/google";
-import { useRef, useState } from "react";
-import { Toast } from "primereact/toast";
+import { useState } from "react";
 import { CredentialResponse } from "@react-oauth/google";
 import { useLoginMutation } from "../slices/authSlice";
+import { useAppDispatch } from "./store";
+import { showToast } from "../slices/toastSlice";
 
 const Login: React.FC<{}> = ({}) => {
   const { t } = useTranslation();
-  const toast = useRef<Toast>(null);
+  const dispatch = useAppDispatch();
 
   const [credentialResponse, setCredentialResponse] =
     useState<CredentialResponse | null>(null);
@@ -29,18 +30,22 @@ const Login: React.FC<{}> = ({}) => {
 
   useEffect(() => {
     if (isLoginError) {
-      toast.current?.show({
-        severity: "error",
-        summary: t("loginError"),
-      });
+      dispatch(
+        showToast({
+          severity: "error",
+          summary: t("loginError"),
+        })
+      );
     }
-  }, [isLoginError]);
+  }, [isLoginError, dispatch, t]);
 
   const handleGoogleError = () => {
-    toast.current?.show({
-      severity: "error",
-      summary: t("loginError"),
-    });
+    dispatch(
+      showToast({
+        severity: "error",
+        summary: t("loginError"),
+      })
+    );
   };
 
   useEffect(() => {
@@ -51,7 +56,6 @@ const Login: React.FC<{}> = ({}) => {
 
   return (
     <div className="flex flex-col items-center justify-center h-full w-full">
-      <Toast position="top-right" ref={toast} />
       <LoadingScreen isLoading={isLoading || isLoginLoading} />
       <GoogleLogin
         use_fedcm_for_prompt

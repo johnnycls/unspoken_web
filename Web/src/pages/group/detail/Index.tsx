@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -13,16 +13,17 @@ import {
 } from "../../../slices/userSlice";
 import LoadingScreen from "../../../components/LoadingScreen";
 import Error from "../../../components/Error";
-import { Toast } from "primereact/toast";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import groupMembers from "../utils/groupMembers";
 import GroupDetailContent from "./Content";
+import { useAppDispatch } from "../../../app/store";
+import { showToast } from "../../../slices/toastSlice";
 
 const GroupDetail: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { groupId } = useParams<{ groupId: string }>();
-  const toast = useRef<Toast>(null);
+  const dispatch = useAppDispatch();
 
   const {
     data: groups,
@@ -67,60 +68,72 @@ const GroupDetail: React.FC = () => {
 
   useEffect(() => {
     if (isRespondSuccess) {
-      toast.current?.show({
-        severity: "success",
-        summary: t("updateInvitationSuccess"),
-      });
+      dispatch(
+        showToast({
+          severity: "success",
+          summary: t("updateInvitationSuccess"),
+        })
+      );
       navigate("/groups");
     }
-  }, [isRespondSuccess, navigate]);
+  }, [isRespondSuccess, navigate, dispatch, t]);
 
   useEffect(() => {
     if (isRespondError) {
-      toast.current?.show({
-        severity: "error",
-        summary: t("updateInvitationError"),
-      });
+      dispatch(
+        showToast({
+          severity: "error",
+          summary: t("updateInvitationError"),
+        })
+      );
     }
-  }, [isRespondError, t]);
+  }, [isRespondError, t, dispatch]);
 
   useEffect(() => {
     if (isLeaveSuccess) {
-      toast.current?.show({
-        severity: "success",
-        summary: t("leaveGroupSuccess"),
-      });
+      dispatch(
+        showToast({
+          severity: "success",
+          summary: t("leaveGroupSuccess"),
+        })
+      );
       navigate("/groups");
     }
-  }, [isLeaveSuccess, navigate, t]);
+  }, [isLeaveSuccess, navigate, t, dispatch]);
 
   useEffect(() => {
     if (isLeaveError) {
-      toast.current?.show({
-        severity: "error",
-        summary: t("leaveGroupError"),
-      });
+      dispatch(
+        showToast({
+          severity: "error",
+          summary: t("leaveGroupError"),
+        })
+      );
     }
-  }, [isLeaveError, t]);
+  }, [isLeaveError, t, dispatch]);
 
   useEffect(() => {
     if (isDeleteSuccess) {
-      toast.current?.show({
-        severity: "success",
-        summary: t("deleteGroupSuccess"),
-      });
+      dispatch(
+        showToast({
+          severity: "success",
+          summary: t("deleteGroupSuccess"),
+        })
+      );
       navigate("/groups");
     }
-  }, [isDeleteSuccess, navigate, t]);
+  }, [isDeleteSuccess, navigate, t, dispatch]);
 
   useEffect(() => {
     if (isDeleteError) {
-      toast.current?.show({
-        severity: "error",
-        summary: t("deleteGroupError"),
-      });
+      dispatch(
+        showToast({
+          severity: "error",
+          summary: t("deleteGroupError"),
+        })
+      );
     }
-  }, [isDeleteError, t]);
+  }, [isDeleteError, t, dispatch]);
 
   const group = groups?.find((g) => g.id === groupId);
   const userEmail = profile?.email || "";
@@ -180,7 +193,6 @@ const GroupDetail: React.FC = () => {
 
   return (
     <div className="w-full h-full flex flex-col">
-      <Toast position="top-right" ref={toast} />
       <ConfirmDialog />
       <LoadingScreen
         isLoading={

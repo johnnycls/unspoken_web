@@ -1,7 +1,8 @@
-import { useRef, useState } from "react";
-import { Toast } from "primereact/toast";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CredentialResponse, useGoogleOneTapLogin } from "@react-oauth/google";
+import { useAppDispatch } from "../app/store";
+import { showToast } from "../slices/toastSlice";
 
 const useGoogleLogin: () => {
   credentialResponse: CredentialResponse | null;
@@ -12,7 +13,7 @@ const useGoogleLogin: () => {
     useState<CredentialResponse | null>(null);
   const [isGoogleError, setIsGoogleError] = useState(false);
   const [isGoogleSuccess, setIsGoogleSuccess] = useState(false);
-  const toast = useRef<Toast>(null);
+  const dispatch = useAppDispatch();
   const { t } = useTranslation();
 
   const handleGoogleSuccess = async (
@@ -24,11 +25,12 @@ const useGoogleLogin: () => {
 
   const handleGoogleError = () => {
     setIsGoogleError(true);
-    toast.current?.show({
-      severity: "error",
-      summary: t("login.googleFailedSummary"),
-      detail: t("login.googleFailedDetail"),
-    });
+    dispatch(
+      showToast({
+        severity: "error",
+        summary: t("login.googleFailedSummary"),
+      })
+    );
   };
 
   useGoogleOneTapLogin({

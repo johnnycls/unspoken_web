@@ -5,7 +5,6 @@ import AppBar from "../../../components/AppBar";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
-import { Toast } from "primereact/toast";
 import {
   Crush,
   useCreateOrUpdateCrushMutation,
@@ -15,11 +14,13 @@ import { validateEmail } from "../../../utils/validation";
 import { ToggleButton } from "primereact/togglebutton";
 import { Card } from "primereact/card";
 import { MESSAGE_LENGTH_LIMIT } from "../../../config";
+import { useAppDispatch } from "../../../app/store";
+import { showToast } from "../../../slices/toastSlice";
 
 const Content: React.FC<{ crush: Crush | null }> = ({ crush }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const toast = React.useRef<Toast>(null);
+  const dispatch = useAppDispatch();
 
   const [createOrUpdateCrush, { isLoading: isUpdating }] =
     useCreateOrUpdateCrushMutation();
@@ -48,11 +49,12 @@ const Content: React.FC<{ crush: Crush | null }> = ({ crush }) => {
 
   const handleSubmit = async () => {
     if (!isFormValid()) {
-      toast.current?.show({
-        severity: "error",
-        summary: t("invalidForm"),
-        life: 3000,
-      });
+      dispatch(
+        showToast({
+          severity: "error",
+          summary: t("invalidForm"),
+        })
+      );
       return;
     }
 
@@ -65,19 +67,20 @@ const Content: React.FC<{ crush: Crush | null }> = ({ crush }) => {
 
       try {
         await deleteCrush().unwrap();
-        toast.current?.show({
-          severity: "success",
-          summary: t("deleteCrushSuccess"),
-          life: 3000,
-        });
+        dispatch(
+          showToast({
+            severity: "success",
+            summary: t("deleteCrushSuccess"),
+          })
+        );
         navigate("/crush");
       } catch (error: any) {
-        toast.current?.show({
-          severity: "error",
-          summary: t("deleteCrushError"),
-          detail: error?.data?.message || t("deleteCrushError"),
-          life: 3000,
-        });
+        dispatch(
+          showToast({
+            severity: "error",
+            summary: t("deleteCrushError"),
+          })
+        );
       }
       return;
     }
@@ -88,19 +91,20 @@ const Content: React.FC<{ crush: Crush | null }> = ({ crush }) => {
         message: message.trim(),
       }).unwrap();
 
-      toast.current?.show({
-        severity: "success",
-        summary: t("updateCrushSuccess"),
-        life: 3000,
-      });
+      dispatch(
+        showToast({
+          severity: "success",
+          summary: t("updateCrushSuccess"),
+        })
+      );
       navigate("/crush");
     } catch (error: any) {
-      toast.current?.show({
-        severity: "error",
-        summary: t("updateCrushError"),
-        detail: error?.data?.message || t("updateCrushError"),
-        life: 3000,
-      });
+      dispatch(
+        showToast({
+          severity: "error",
+          summary: t("updateCrushError"),
+        })
+      );
     }
   };
 
@@ -110,8 +114,6 @@ const Content: React.FC<{ crush: Crush | null }> = ({ crush }) => {
 
   return (
     <div className="w-full h-full flex flex-col">
-      <Toast position="top-right" ref={toast} />
-
       <AppBar onBack={handleBack}>
         <h1 className="text-2xl">{t("crush.updateCrush")}</h1>
       </AppBar>

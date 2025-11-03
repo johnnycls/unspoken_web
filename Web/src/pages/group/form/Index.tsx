@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -13,7 +13,6 @@ import {
 } from "../../../slices/userSlice";
 import LoadingScreen from "../../../components/LoadingScreen";
 import Error from "../../../components/Error";
-import { Toast } from "primereact/toast";
 import groupMembers from "../utils/groupMembers";
 import {
   MAX_TOTAL_MEMBERS,
@@ -22,12 +21,14 @@ import {
 } from "../../../config";
 import GroupFormContent from "./Content";
 import { validateEmail } from "../../../utils/validation";
+import { useAppDispatch } from "../../../app/store";
+import { showToast } from "../../../slices/toastSlice";
 
 const GroupForm: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { groupId } = useParams<{ groupId: string }>();
-  const toast = useRef<Toast>(null);
+  const dispatch = useAppDispatch();
 
   const {
     data: groups,
@@ -118,77 +119,93 @@ const GroupForm: React.FC = () => {
 
   useEffect(() => {
     if (isCreateSuccess || isUpdateSuccess) {
-      toast.current?.show({
-        severity: "success",
-        summary: isEditMode
-          ? t("groups.updateSuccess")
-          : t("groups.createSuccess"),
-      });
+      dispatch(
+        showToast({
+          severity: "success",
+          summary: isEditMode
+            ? t("groups.updateSuccess")
+            : t("groups.createSuccess"),
+        })
+      );
       navigate("/groups");
     }
-  }, [isCreateSuccess, isUpdateSuccess, isEditMode, navigate, t]);
+  }, [isCreateSuccess, isUpdateSuccess, isEditMode, navigate, t, dispatch]);
 
   useEffect(() => {
     if (isCreateError) {
-      toast.current?.show({
-        severity: "error",
-        summary: t("groups.createError"),
-      });
+      dispatch(
+        showToast({
+          severity: "error",
+          summary: t("groups.createError"),
+        })
+      );
     }
-  }, [isCreateError, t]);
+  }, [isCreateError, t, dispatch]);
 
   useEffect(() => {
     if (isUpdateError) {
-      toast.current?.show({
-        severity: "error",
-        summary: t("groups.updateError"),
-      });
+      dispatch(
+        showToast({
+          severity: "error",
+          summary: t("groups.updateError"),
+        })
+      );
     }
-  }, [isUpdateError, t]);
+  }, [isUpdateError, t, dispatch]);
 
   const handleAddEmail = async () => {
     const trimmedEmail = newEmail.trim().toLowerCase();
 
     if (!trimmedEmail) {
-      toast.current?.show({
-        severity: "warn",
-        summary: t("groups.emailRequired"),
-      });
+      dispatch(
+        showToast({
+          severity: "warn",
+          summary: t("groups.emailRequired"),
+        })
+      );
       return;
     }
 
     if (!validateEmail(trimmedEmail)) {
-      toast.current?.show({
-        severity: "warn",
-        summary: t("groups.invalidEmail"),
-      });
+      dispatch(
+        showToast({
+          severity: "warn",
+          summary: t("groups.invalidEmail"),
+        })
+      );
       return;
     }
 
     const userEmail = profile?.email || "";
     if (trimmedEmail === userEmail) {
-      toast.current?.show({
-        severity: "warn",
-        summary: t("groups.cannotInviteSelf"),
-      });
+      dispatch(
+        showToast({
+          severity: "warn",
+          summary: t("groups.cannotInviteSelf"),
+        })
+      );
       return;
     }
 
     const existingMembers = [...memberEmails, ...invitedEmails];
 
     if (existingMembers.includes(trimmedEmail)) {
-      toast.current?.show({
-        severity: "warn",
-        summary: t("groups.emailAlreadyAdded"),
-      });
+      dispatch(
+        showToast({
+          severity: "warn",
+          summary: t("groups.emailAlreadyAdded"),
+        })
+      );
       return;
     }
 
     if (existingMembers.length >= MAX_TOTAL_MEMBERS) {
-      toast.current?.show({
-        severity: "warn",
-        summary: t("groups.maxMembersReached"),
-      });
+      dispatch(
+        showToast({
+          severity: "warn",
+          summary: t("groups.maxMembersReached"),
+        })
+      );
       return;
     }
 
@@ -198,34 +215,42 @@ const GroupForm: React.FC = () => {
         true
       ).unwrap();
       if (!payload || !payload[trimmedEmail]) {
-        toast.current?.show({
-          severity: "error",
-          summary: t("memberNotFound"),
-        });
+        dispatch(
+          showToast({
+            severity: "error",
+            summary: t("memberNotFound"),
+          })
+        );
         return;
       }
       setNewUserNames((prev) => ({ ...prev, ...payload }));
       setInvitedEmails([...invitedEmails, trimmedEmail]);
       setNewEmail("");
-      toast.current?.show({
-        severity: "success",
-        summary: t("groups.addMemberSuccess"),
-      });
+      dispatch(
+        showToast({
+          severity: "success",
+          summary: t("groups.addMemberSuccess"),
+        })
+      );
     } catch (error) {
-      toast.current?.show({
-        severity: "error",
-        summary: t("memberNotFound"),
-      });
+      dispatch(
+        showToast({
+          severity: "error",
+          summary: t("memberNotFound"),
+        })
+      );
       return;
     }
   };
 
   const handleRemoveMember = (email: string) => {
     if (email === creatorEmail) {
-      toast.current?.show({
-        severity: "warn",
-        summary: t("groups.cannotRemoveCreator"),
-      });
+      dispatch(
+        showToast({
+          severity: "warn",
+          summary: t("groups.cannotRemoveCreator"),
+        })
+      );
     } else if (memberEmails.includes(email)) {
       setMemberEmails(memberEmails.filter((e) => e !== email));
     } else if (invitedEmails.includes(email)) {
@@ -237,26 +262,32 @@ const GroupForm: React.FC = () => {
     const trimmedName = name.trim();
 
     if (!trimmedName) {
-      toast.current?.show({
-        severity: "warn",
-        summary: t("groups.nameRequired"),
-      });
+      dispatch(
+        showToast({
+          severity: "warn",
+          summary: t("groups.nameRequired"),
+        })
+      );
       return;
     }
 
     if (trimmedName.length > NAME_LENGTH_LIMIT) {
-      toast.current?.show({
-        severity: "warn",
-        summary: t("groups.nameTooLong"),
-      });
+      dispatch(
+        showToast({
+          severity: "warn",
+          summary: t("groups.nameTooLong"),
+        })
+      );
       return;
     }
 
     if (description.length > DESCRIPTION_LENGTH_LIMIT) {
-      toast.current?.show({
-        severity: "warn",
-        summary: t("groups.descriptionTooLong"),
-      });
+      dispatch(
+        showToast({
+          severity: "warn",
+          summary: t("groups.descriptionTooLong"),
+        })
+      );
       return;
     }
 
@@ -303,7 +334,6 @@ const GroupForm: React.FC = () => {
 
   return (
     <div className="w-full h-full flex flex-col">
-      <Toast position="top-right" ref={toast} />
       <LoadingScreen
         isLoading={
           isCreateLoading ||

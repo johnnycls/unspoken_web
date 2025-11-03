@@ -1,18 +1,19 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { profile, useUpdateProfileMutation } from "../../slices/userSlice";
 import { useTranslation } from "react-i18next";
 import AppBar from "../../components/AppBar";
 import BottomTab from "../../components/BottomTab";
 import { Button } from "primereact/button";
-import { Toast } from "primereact/toast";
 import LoadingScreen from "../../components/LoadingScreen";
 import SettingsList from "./SettingsList";
 import DisplayNameDialog from "./DisplayNameDialog";
 import LanguageDialog from "./LanguageDialog";
+import { useAppDispatch } from "../../app/store";
+import { showToast } from "../../slices/toastSlice";
 
 const Content: React.FC<{ profile?: profile }> = ({ profile }) => {
   const { t } = useTranslation();
-  const toast = useRef<Toast>(null);
+  const dispatch = useAppDispatch();
 
   const [updateProfile, { isLoading, isError, isSuccess }] =
     useUpdateProfileMutation();
@@ -22,23 +23,27 @@ const Content: React.FC<{ profile?: profile }> = ({ profile }) => {
 
   useEffect(() => {
     if (isSuccess) {
-      toast.current?.show({
-        severity: "success",
-        summary: t("updateProfileSuccess"),
-      });
+      dispatch(
+        showToast({
+          severity: "success",
+          summary: t("updateProfileSuccess"),
+        })
+      );
       setShowNameDialog(false);
       setShowLangDialog(false);
     }
-  }, [isSuccess, t]);
+  }, [isSuccess, t, dispatch]);
 
   useEffect(() => {
     if (isError) {
-      toast.current?.show({
-        severity: "error",
-        summary: t("updateProfileError"),
-      });
+      dispatch(
+        showToast({
+          severity: "error",
+          summary: t("updateProfileError"),
+        })
+      );
     }
-  }, [isError, t]);
+  }, [isError, t, dispatch]);
 
   const handleNameSave = (name: string) => {
     updateProfile({ name });
@@ -55,7 +60,6 @@ const Content: React.FC<{ profile?: profile }> = ({ profile }) => {
 
   return (
     <div className="w-full h-full flex flex-col justify-between">
-      <Toast position="top-right" ref={toast} />
       <LoadingScreen isLoading={isLoading} />
 
       <AppBar>

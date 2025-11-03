@@ -5,7 +5,6 @@ import AppBar from "../../../components/AppBar";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
-import { Toast } from "primereact/toast";
 import { Dropdown } from "primereact/dropdown";
 import { Checkbox } from "primereact/checkbox";
 import { Card } from "primereact/card";
@@ -15,6 +14,8 @@ import { validateEmail } from "../../../utils/validation";
 import { isSameDay } from "../../../utils/time";
 import { NAME_LENGTH_LIMIT, LETTER_LENGTH_LIMIT } from "../../../config";
 import { profile } from "../../../slices/userSlice";
+import { useAppDispatch } from "../../../app/store";
+import { showToast } from "../../../slices/toastSlice";
 
 const Content: React.FC<{
   groups: Group[];
@@ -23,7 +24,7 @@ const Content: React.FC<{
 }> = ({ groups, letters, profile }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const toast = React.useRef<Toast>(null);
+  const dispatch = useAppDispatch();
 
   const [sendLetter, { isLoading: isSending }] = useSendLetterMutation();
 
@@ -50,7 +51,7 @@ const Content: React.FC<{
     setSelectedUser("");
   }, [selectedGroup]);
 
-  // Check if can send (1 letter per day limit)
+  // Check if can send (2 letter per day limit)
   const canSendToday = () => {
     if (last_written_letters.length <= 1) return true;
 
@@ -101,22 +102,21 @@ const Content: React.FC<{
         content: content.trim(),
       }).unwrap();
 
-      toast.current?.show({
-        severity: "success",
-        summary: t("letter.sendSuccess"),
-        life: 3000,
-      });
+      dispatch(
+        showToast({
+          severity: "success",
+          summary: t("letter.sendSuccess"),
+        })
+      );
 
-      setTimeout(() => {
-        navigate("/");
-      }, 1000);
+      navigate("/");
     } catch (error: any) {
-      toast.current?.show({
-        severity: "error",
-        summary: t("letter.sendError"),
-        detail: error?.data?.message || t("letter.sendError"),
-        life: 3000,
-      });
+      dispatch(
+        showToast({
+          severity: "error",
+          summary: t("letter.sendError"),
+        })
+      );
     }
   };
 
@@ -126,8 +126,6 @@ const Content: React.FC<{
 
   return (
     <div className="w-full h-full flex flex-col">
-      <Toast position="top-right" ref={toast} />
-
       <AppBar onBack={handleBack}>
         <h1 className="text-2xl">{t("letter.newLetter")}</h1>
       </AppBar>
