@@ -79,14 +79,20 @@ const Content: React.FC<{ crush: Crush | null }> = ({ crush }) => {
 
               <h3 className="font-semibold mb-2">{t("crush.yourMessage")}:</h3>
               <p className="mb-2">{crush.message}</p>
-              <p className="text-sm text-gray-500">{crush.month}</p>
 
-              {isViewingPeriod && crush.responseMessage && (
-                <>
-                  {t("crush.theyLikeYouToo")}
-                  <p className="mb-2">{crush.responseMessage}</p>
-                </>
-              )}
+              {isViewingPeriod &&
+                (crush.responseMessage ? (
+                  <>
+                    <h3 className="font-semibold mb-2">
+                      {t("crush.heLikesYouToo")}:
+                    </h3>
+                    <p className="mb-2">{crush.responseMessage}</p>
+                  </>
+                ) : (
+                  <h3 className="font-semibold mb-2">
+                    {t("crush.heDoesntLikeYou")}:
+                  </h3>
+                ))}
 
               {isSubmissionPeriod && (
                 <Button
@@ -95,6 +101,8 @@ const Content: React.FC<{ crush: Crush | null }> = ({ crush }) => {
                   className="w-full"
                 />
               )}
+
+              <p className="text-sm text-gray-500">{crush.month}</p>
             </div>
           )}
         </Card>

@@ -90,7 +90,9 @@ i18n
             updateCrush: "Update Crush",
             yourCrushName: "Your Crush Name",
             yourMessage: "Your Message",
-            theyLikeYouToo: "They Like You Too",
+            heLikesYouToo: "He/She Likes You Too, He/She Said:",
+            heDoesntLikeYou:
+              "He/She did not enter you as his/her crush. Don't be discouraged, maybe he/she just doesn't use this site, or forgot to enter a crush.",
             hasCrush: "I have a crush",
             noCrush: "I don't have a crush",
             crushEmail: "Crush Email",
@@ -232,7 +234,9 @@ i18n
             updateCrush: "更新暗戀對象",
             yourCrushName: "你的暗戀對象",
             yourMessage: "你的留言",
-            theyLikeYouToo: "對方也喜歡你",
+            heLikesYouToo: "對方也喜歡你，他/她說：",
+            heDoesntLikeYou:
+              "對方沒有填寫你爲他/她的暗戀對象。不用灰心，可能他/她只是沒有使用這個網站，或是忘記了填寫暗戀對象。",
             hasCrush: "我有暗戀對象",
             noCrush: "我沒有暗戀對象",
             crushEmail: "暗戀對象電子郵件",

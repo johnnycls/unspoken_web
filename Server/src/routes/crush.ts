@@ -118,7 +118,9 @@ router.get("/", authMiddleware, async (req: Request, res: Response) => {
     });
 
     res.status(200).json({
-      ...crush,
+      toEmail: crush.toEmail,
+      message: crush.message,
+      month: crush.month,
       responseMessage: mutualCrush ? mutualCrush.message : "",
     });
   } catch (error) {
