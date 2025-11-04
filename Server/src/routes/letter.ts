@@ -45,6 +45,7 @@ router.get("/", authMiddleware, async (req: Request, res: Response) => {
       alias: letter.alias,
       content: letter.content,
       replyContent: letter.replyContent,
+      replyTimestamp: letter.replyTimestamp,
       timestamp: letter.timestamp,
     }));
 
@@ -180,6 +181,7 @@ router.post(
 
       // Update the letter with reply
       letter.replyContent = sanitizeString(content);
+      letter.replyTimestamp = new Date();
       await letter.save();
 
       res.status(200).json({

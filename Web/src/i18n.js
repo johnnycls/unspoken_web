@@ -173,6 +173,7 @@ i18n
             sendReply: "Send Reply",
             replySuccess: "Reply sent successfully",
             replyError: "Failed to send reply",
+            repliedOn: "Replied on",
           },
           // Letter messages
           fetchLettersError: "Failed to load letters",
@@ -323,6 +324,7 @@ i18n
             sendReply: "寄出回覆",
             replySuccess: "回覆寄出成功",
             replyError: "回覆寄出失敗",
+            repliedOn: "回覆於",
           },
           // Letter messages
           fetchLettersError: "載入信件失敗",

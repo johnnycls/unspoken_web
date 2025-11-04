@@ -80,7 +80,16 @@ const Content: React.FC<{
         </Card>
 
         {hasReply ? (
-          <Card title={t("letter.reply")}>
+          <Card
+            title={t("letter.reply")}
+            footer={
+              letter.replyTimestamp && (
+                <div className="text-sm text-gray-500">
+                  {t("letter.repliedOn")}: {formatDate(letter.replyTimestamp)}
+                </div>
+              )
+            }
+          >
             <div className="whitespace-pre-wrap">{letter.replyContent}</div>
           </Card>
         ) : (

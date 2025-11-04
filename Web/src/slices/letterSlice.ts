@@ -12,6 +12,7 @@ export type Letter = {
   alias: string;
   content: string;
   replyContent: string;
+  replyTimestamp: Date | null;
   timestamp: Date;
 };
 

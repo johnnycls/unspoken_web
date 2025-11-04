@@ -7,6 +7,7 @@ export interface ILetter extends Document {
   alias: string;
   content: string;
   replyContent: string;
+  replyTimestamp: Date | null;
   timestamp: Date;
 }
 
@@ -18,6 +19,7 @@ const letterSchema: Schema = new Schema(
     alias: { type: String, default: "" },
     content: { type: String, required: true },
     replyContent: { type: String, default: "" },
+    replyTimestamp: { type: Date, default: null },
     timestamp: { type: Date, default: Date.now },
   },
   {
