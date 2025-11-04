@@ -39,10 +39,12 @@ router.get("/", authMiddleware, async (req: Request, res: Response) => {
     }).sort({ timestamp: -1 });
 
     const results = letters.map((letter) => ({
+      id: letter._id,
       fromGroupId: letter.fromGroupId,
       toEmail: letter.toEmail,
       alias: letter.alias,
       content: letter.content,
+      replyContent: letter.replyContent,
       timestamp: letter.timestamp,
     }));
 
@@ -123,11 +125,71 @@ router.post("/", authMiddleware, async (req: Request, res: Response) => {
 
     res.status(201).json({
       message: "Letter sent successfully",
-      letterId: letter._id,
+      id: letter._id,
     });
   } catch (error) {
     handleError(error, res);
   }
 });
+
+// Reply to a letter
+router.post(
+  "/:id/reply",
+  authMiddleware,
+  async (req: Request, res: Response) => {
+    try {
+      const userEmail = res.locals.email as string;
+      const { id } = req.params;
+      const { content } = req.body;
+
+      // Validate letter ID
+      if (!validateObjectId(id, "Letter ID", res)) return;
+
+      // Validate required fields
+      if (!validateRequiredField(content, "content", res)) return;
+
+      // Validate content length
+      if (!validateStringLength(content, LETTER_LENGTH_LIMIT, "Content", res))
+        return;
+
+      if (!validateNonEmptyString(content, "Content", res)) return;
+
+      // Find the letter
+      const letter = await Letter.findById(id);
+
+      if (!letter) {
+        res.status(404).json({ message: "Letter not found" });
+        return;
+      }
+
+      // Check if user is the recipient
+      if (letter.toEmail.toLowerCase() !== userEmail.toLowerCase()) {
+        res.status(403).json({
+          message: "You can only reply to letters sent to you",
+        });
+        return;
+      }
+
+      // Check if reply already exists
+      if (letter.replyContent && letter.replyContent.trim() !== "") {
+        res.status(400).json({
+          message: "This letter has already been replied to",
+        });
+        return;
+      }
+
+      // Update the letter with reply
+      letter.replyContent = sanitizeString(content);
+      await letter.save();
+
+      res.status(200).json({
+        message: "Reply sent successfully",
+        letterId: letter._id,
+      });
+    } catch (error) {
+      handleError(error, res);
+    }
+  }
+);
 
 export default router;

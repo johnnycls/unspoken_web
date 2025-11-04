@@ -6,10 +6,12 @@ import {
 } from "../utils/validation";
 
 export type Letter = {
+  id: string;
   fromGroupId: string;
   toEmail: string;
   alias: string;
   content: string;
+  replyContent: string;
   timestamp: Date;
 };
 
@@ -24,7 +26,7 @@ const letterSlice = apiSlice.injectEndpoints({
     sendLetter: builder.mutation<
       {
         message: string;
-        letterId: string;
+        id: string;
       },
       {
         fromGroupId: string;
@@ -58,8 +60,37 @@ const letterSlice = apiSlice.injectEndpoints({
       },
       invalidatesTags: ["Letter"],
     }),
+    replyToLetter: builder.mutation<
+      {
+        message: string;
+        letterId: string;
+      },
+      {
+        letterId: string;
+        content: string;
+      }
+    >({
+      query: ({ letterId, content }) => {
+        // Validate content
+        const contentValidation = validateLetterContent(content);
+        if (!contentValidation.valid) {
+          throw new Error(contentValidation.error);
+        }
+
+        return {
+          url: `letter/${letterId}/reply`,
+          method: "POST",
+          body: { content },
+        };
+      },
+      invalidatesTags: ["Letter"],
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useGetLettersQuery, useSendLetterMutation } = letterSlice;
+export const {
+  useGetLettersQuery,
+  useSendLetterMutation,
+  useReplyToLetterMutation,
+} = letterSlice;

@@ -38,11 +38,7 @@ const Content: React.FC<{ letters: Letter[]; userEmail: string }> = ({
   };
 
   const handleLetterClick = (letter: Letter) => {
-    // Find the original index in the full letters array
-    const originalIndex = letters.findIndex((l) => l === letter);
-    if (originalIndex !== -1) {
-      navigate(`/${originalIndex}`);
-    }
+    navigate(`/${letter.id}`);
   };
 
   return (

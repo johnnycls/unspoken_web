@@ -168,6 +168,11 @@ i18n
             sendError: "Failed to send letter",
             updateReminder:
               "Letters are updated daily at 00:00 UTC and 12:00 UTC",
+            reply: "Reply",
+            replyPlaceholder: "Write your reply...",
+            sendReply: "Send Reply",
+            replySuccess: "Reply sent successfully",
+            replyError: "Failed to send reply",
           },
           // Letter messages
           fetchLettersError: "Failed to load letters",
@@ -313,6 +318,11 @@ i18n
             sendSuccess: "信件寄出成功",
             sendError: "信件寄出失敗",
             updateReminder: "信件會在每天UTC時間00:00和12:00更新",
+            reply: "回覆",
+            replyPlaceholder: "寫下你的回覆...",
+            sendReply: "寄出回覆",
+            replySuccess: "回覆寄出成功",
+            replyError: "回覆寄出失敗",
           },
           // Letter messages
           fetchLettersError: "載入信件失敗",

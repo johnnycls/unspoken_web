@@ -6,6 +6,7 @@ export interface ILetter extends Document {
   toEmail: string;
   alias: string;
   content: string;
+  replyContent: string;
   timestamp: Date;
 }
 
@@ -16,6 +17,7 @@ const letterSchema: Schema = new Schema(
     toEmail: { type: String, required: true },
     alias: { type: String, default: "" },
     content: { type: String, required: true },
+    replyContent: { type: String, default: "" },
     timestamp: { type: Date, default: Date.now },
   },
   {

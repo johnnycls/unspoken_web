@@ -18,7 +18,7 @@ const router = createBrowserRouter([
     children: [
       { path: "", element: <Letter /> },
       { path: "new", element: <NewLetter /> },
-      { path: ":index", element: <LetterDetail /> },
+      { path: ":id", element: <LetterDetail /> },
       { path: "settings", element: <Settings /> },
       { path: "crush", element: <Crush /> },
       { path: "crush/update", element: <UpdateCrush /> },
