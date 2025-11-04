@@ -46,6 +46,7 @@ i18n
             language: "Language",
             languageLabel: "Select your preferred language",
             languagePlaceholder: "Select language",
+            supportUs: "Support Us",
             logout: "Logout",
           },
           // Group pages
@@ -193,6 +194,7 @@ i18n
             language: "語言",
             languageLabel: "選擇你的偏好語言",
             languagePlaceholder: "選擇語言",
+            supportUs: "支持我們",
             logout: "登出",
           },
           // Group pages

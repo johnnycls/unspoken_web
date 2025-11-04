@@ -53,6 +53,10 @@ const Content: React.FC<{ profile?: profile }> = ({ profile }) => {
     updateProfile({ lang });
   };
 
+  const handleSupportUsClick = () => {
+    window.open("https://buymeacoffee.com/unspokenwe2", "_blank");
+  };
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     window.location.href = "/";
@@ -75,11 +79,14 @@ const Content: React.FC<{ profile?: profile }> = ({ profile }) => {
           onLanguageClick={() => setShowLangDialog(true)}
         />
 
-        <div className="p-4 mt-auto">
+        <div className="pb-3 px-4 mt-auto flex flex-col gap-2">
+          <Button
+            label={t("settings.supportUs")}
+            onClick={handleSupportUsClick}
+          />
           <Button
             label={t("settings.logout")}
             icon="pi pi-sign-out"
-            className="w-full"
             severity="danger"
             onClick={handleLogout}
           />
