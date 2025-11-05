@@ -167,7 +167,7 @@ router.post(
       );
 
       const userMap = users.reduce((acc, user) => {
-        acc[user.email] = user.name || user.email;
+        acc[user.email] = user.name || "";
         return acc;
       }, {} as { [key: string]: string });
 

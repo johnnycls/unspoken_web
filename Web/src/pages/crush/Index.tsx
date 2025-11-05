@@ -4,12 +4,18 @@ import { useTranslation } from "react-i18next";
 import Content from "./Content";
 import { useGetCrushQuery } from "../../slices/crushSlice";
 import Error from "../../components/Error";
+import { useGetUsersByEmailsQuery } from "../../slices/userSlice";
 
 const Crush: React.FC = () => {
   const { t } = useTranslation();
   const { data: crush, isLoading, isError, refetch } = useGetCrushQuery();
+  const { data: username, isLoading: isUserNamesLoading } =
+    useGetUsersByEmailsQuery(
+      { emails: crush ? [crush.toEmail] : [] },
+      { skip: !crush?.toEmail }
+    );
 
-  if (isLoading) {
+  if (isLoading || isUserNamesLoading) {
     return <LoadingScreen isLoading={true} />;
   }
 
@@ -17,7 +23,16 @@ const Crush: React.FC = () => {
     return <Error onReload={refetch} errorText={t("fetchCrushesError")} />;
   }
 
-  return <Content crush={crush} />;
+  const userExist =
+    username !== undefined && crush !== null && crush.toEmail in username;
+
+  return (
+    <Content
+      crush={crush}
+      userExist={userExist}
+      username={userExist ? username[crush.toEmail] : ""}
+    />
+  );
 };
 
 export default Crush;

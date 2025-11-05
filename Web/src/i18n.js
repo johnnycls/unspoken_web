@@ -78,6 +78,8 @@ i18n
             addMember: "Add Member",
             addMemberSuccess: "Member added",
             emailPlaceholder: "Enter email address",
+            crushName: "Your Crush's Name",
+            crushNotHasAccount: "Your crush has not registered yet",
             noGroups: "No groups yet",
             noInvitations: "No invitations",
           },
@@ -252,6 +254,8 @@ i18n
             noCrush: "我沒有暗戀對象",
             crushEmail: "暗戀對象電子郵件",
             emailPlaceholder: "輸入暗戀對象的電子郵件",
+            crushName: "暗戀對象名稱",
+            crushNotHasAccount: "對方尚未註冊帳號",
             message: "留言",
             messagePlaceholder: "輸入你的留言...",
             rules: {

@@ -16,6 +16,7 @@ import { Card } from "primereact/card";
 import { MESSAGE_LENGTH_LIMIT } from "../../../config";
 import { useAppDispatch } from "../../../app/store";
 import { showToast } from "../../../slices/toastSlice";
+import { Checkbox } from "primereact/checkbox";
 
 const Content: React.FC<{ crush: Crush | null }> = ({ crush }) => {
   const { t } = useTranslation();
@@ -123,20 +124,22 @@ const Content: React.FC<{ crush: Crush | null }> = ({ crush }) => {
           className="w-full max-h-full overflow-y-auto"
           pt={{ content: { className: "flex flex-col gap-4" } }}
         >
-          <ToggleButton
-            onLabel={t("crush.hasCrush")}
-            offLabel={t("crush.noCrush")}
-            onIcon="pi pi-check"
-            offIcon="pi pi-times"
-            checked={hasCrush}
-            onChange={(e) => {
-              setHasCrush(e.value);
-              if (!e.value) {
-                setEmail("");
-                setMessage("");
-              }
-            }}
-          />
+          <div className="flex items-center gap-2">
+            <Checkbox
+              inputId="has-crush"
+              checked={hasCrush}
+              onChange={(e) => {
+                setHasCrush(e.checked || false);
+                if (!e.checked) {
+                  setEmail("");
+                  setMessage("");
+                }
+              }}
+            />
+            <label htmlFor="has-crush" className="text-sm">
+              {t("crush.hasCrush")}
+            </label>
+          </div>
 
           {hasCrush && (
             <>

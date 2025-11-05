@@ -9,7 +9,11 @@ import { Crush } from "../../slices/crushSlice";
 import { formatUTCTime } from "../../utils/time";
 import { Accordion, AccordionTab } from "primereact/accordion";
 
-const Content: React.FC<{ crush: Crush | null }> = ({ crush }) => {
+const Content: React.FC<{
+  crush: Crush | null;
+  userExist: boolean;
+  username: string;
+}> = ({ crush, username, userExist }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -76,7 +80,15 @@ const Content: React.FC<{ crush: Crush | null }> = ({ crush }) => {
                     {t("crush.yourCrushEmail")}:
                   </h3>
                   <p className="text-lg">{crush.toEmail}</p>
+                  {!userExist && <div>{t("crush.crushNotHasAccount")}</div>}
                 </div>
+
+                {username && (
+                  <div>
+                    <h3 className="font-semibold">{t("crush.crushName")}:</h3>
+                    <p className="text-lg">{username}</p>
+                  </div>
+                )}
 
                 <div>
                   <h3 className="font-semibold">{t("crush.yourMessage")}:</h3>
