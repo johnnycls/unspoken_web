@@ -3,10 +3,12 @@ import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { apiSlice } from "../slices/apiSlice";
 import toastReducer from "../slices/toastSlice";
+import userNamesCacheReducer from "../slices/userNamesCacheSlice";
 
 const rootReducer = combineReducers({
   [apiSlice.reducerPath]: apiSlice.reducer,
   toast: toastReducer,
+  userNamesCache: userNamesCacheReducer,
 });
 
 export const store = configureStore({

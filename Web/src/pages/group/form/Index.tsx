@@ -6,11 +6,7 @@ import {
   useCreateGroupMutation,
   useUpdateGroupMutation,
 } from "../../../slices/groupSlice";
-import {
-  useGetProfileQuery,
-  useGetUsersByEmailsQuery,
-  useLazyGetUsersByEmailsQuery,
-} from "../../../slices/userSlice";
+import { useGetProfileQuery } from "../../../slices/userSlice";
 import LoadingScreen from "../../../components/LoadingScreen";
 import Error from "../../../components/Error";
 import groupMembers from "../utils/groupMembers";
@@ -23,6 +19,7 @@ import GroupFormContent from "./Content";
 import { validateEmail } from "../../../utils/validation";
 import { useAppDispatch } from "../../../app/store";
 import { showToast } from "../../../slices/toastSlice";
+import { useUserNames } from "../../../hooks/useUserNames";
 
 const GroupForm: React.FC = () => {
   const { t } = useTranslation();
@@ -70,36 +67,20 @@ const GroupForm: React.FC = () => {
   const [creatorEmail, setCreatorEmail] = useState("");
   const [memberEmails, setMemberEmails] = useState<string[]>([]);
   const [invitedEmails, setInvitedEmails] = useState<string[]>([]);
-  const [newEmail, setNewEmail] = useState("");
-  const [newUserNames, setNewUserNames] = useState<{ [email: string]: string }>(
-    {}
-  );
+  const [newEmail, setNewEmail] = useState<string>("");
 
-  const allOldEmails = isEditMode
-    ? [...(group?.memberEmails || []), ...(group?.invitedEmails || [])]
-    : [profile?.email || ""];
-  const {
-    data: oldUserNames,
-    isError: fetchUserNamesError,
-    isLoading: isUserNamesLoading,
-    refetch: refetchUserNames,
-  } = useGetUsersByEmailsQuery(
-    { emails: allOldEmails },
-    { skip: allOldEmails.length <= 1 }
-  );
-  const [fetchUserName, { isLoading: isNewUserNameLoading }] =
-    useLazyGetUsersByEmailsQuery();
-
-  const userNames = {
-    ...(profile ? { [profile.email]: profile.name } : {}),
-    ...oldUserNames,
-    ...newUserNames,
-  };
   const allMembers = groupMembers({
     creatorEmail: creatorEmail,
     memberEmails: memberEmails,
     invitedEmails: invitedEmails,
   });
+
+  const {
+    userNames,
+    isLoading: isUserNamesLoading,
+    isError: fetchUserNamesError,
+    lazyFetch: fetchUserName,
+  } = useUserNames(allMembers.map((m) => m.email));
 
   useEffect(() => {
     if (isEditMode && group) {
@@ -123,8 +104,8 @@ const GroupForm: React.FC = () => {
         showToast({
           severity: "success",
           summary: isEditMode
-            ? t("groups.updateSuccess")
-            : t("groups.createSuccess"),
+            ? t("updateGroupSuccess")
+            : t("createGroupSuccess"),
         })
       );
       navigate("/groups");
@@ -136,7 +117,7 @@ const GroupForm: React.FC = () => {
       dispatch(
         showToast({
           severity: "error",
-          summary: t("groups.createError"),
+          summary: t("createGroupError"),
         })
       );
     }
@@ -147,7 +128,7 @@ const GroupForm: React.FC = () => {
       dispatch(
         showToast({
           severity: "error",
-          summary: t("groups.updateError"),
+          summary: t("updateGroupError"),
         })
       );
     }
@@ -193,7 +174,7 @@ const GroupForm: React.FC = () => {
       dispatch(
         showToast({
           severity: "warn",
-          summary: t("groups.emailAlreadyAdded"),
+          summary: t("memberAlreadyInGroup"),
         })
       );
       return;
@@ -210,11 +191,8 @@ const GroupForm: React.FC = () => {
     }
 
     try {
-      const payload = await fetchUserName(
-        { emails: [trimmedEmail] },
-        true
-      ).unwrap();
-      if (!payload || !payload[trimmedEmail]) {
+      const payload = await fetchUserName([trimmedEmail]);
+      if (!payload || !(trimmedEmail in payload)) {
         dispatch(
           showToast({
             severity: "error",
@@ -223,7 +201,7 @@ const GroupForm: React.FC = () => {
         );
         return;
       }
-      setNewUserNames((prev) => ({ ...prev, ...payload }));
+
       setInvitedEmails([...invitedEmails, trimmedEmail]);
       setNewEmail("");
       dispatch(
@@ -318,12 +296,6 @@ const GroupForm: React.FC = () => {
     );
   }
 
-  if (fetchUserNamesError) {
-    return (
-      <Error onReload={refetchUserNames} errorText={t("fetchUserNamesError")} />
-    );
-  }
-
   if (isGroupsLoading || isProfileLoading) {
     return <LoadingScreen isLoading={true} />;
   }
@@ -335,12 +307,7 @@ const GroupForm: React.FC = () => {
   return (
     <div className="w-full h-full flex flex-col">
       <LoadingScreen
-        isLoading={
-          isCreateLoading ||
-          isUpdateLoading ||
-          isUserNamesLoading ||
-          isNewUserNameLoading
-        }
+        isLoading={isCreateLoading || isUpdateLoading || isUserNamesLoading}
       />
 
       <GroupFormContent

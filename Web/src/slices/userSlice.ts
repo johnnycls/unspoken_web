@@ -3,6 +3,7 @@ import { apiSlice } from "./apiSlice";
 import i18next from "i18next";
 import { validateName, validateEmailArray } from "../utils/validation";
 import { MAX_TOTAL_MEMBERS } from "../config";
+import { addUserNames } from "./userNamesCacheSlice";
 
 export type profile = {
   email: string;
@@ -81,6 +82,12 @@ const userSlice = apiSlice.injectEndpoints({
           method: "POST",
           body: data,
         };
+      },
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(addUserNames(data));
+        } catch {}
       },
       providesTags: ["Users"],
     }),

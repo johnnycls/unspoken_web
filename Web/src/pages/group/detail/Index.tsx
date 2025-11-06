@@ -7,10 +7,7 @@ import {
   useLeaveGroupMutation,
   useDeleteGroupMutation,
 } from "../../../slices/groupSlice";
-import {
-  useGetProfileQuery,
-  useGetUsersByEmailsQuery,
-} from "../../../slices/userSlice";
+import { useGetProfileQuery } from "../../../slices/userSlice";
 import LoadingScreen from "../../../components/LoadingScreen";
 import Error from "../../../components/Error";
 import { ConfirmDialog } from "primereact/confirmdialog";
@@ -18,6 +15,7 @@ import groupMembers from "../utils/groupMembers";
 import GroupDetailContent from "./Content";
 import { useAppDispatch } from "../../../app/store";
 import { showToast } from "../../../slices/toastSlice";
+import { useUserNames } from "../../../hooks/useUserNames";
 
 const GroupDetail: React.FC = () => {
   const { t } = useTranslation();
@@ -146,14 +144,11 @@ const GroupDetail: React.FC = () => {
   const allEmails = allMembers.map((m) => m.email);
 
   const {
-    data: userNames,
+    userNames,
     isLoading: isUserNamesLoading,
     isError: isUserNamesError,
     refetch: refetchUserNames,
-  } = useGetUsersByEmailsQuery(
-    { emails: allEmails },
-    { skip: allEmails.length === 0 }
-  );
+  } = useUserNames(allEmails);
 
   if (isGroupsError) {
     return <Error onReload={refetchGroups} errorText={t("fetchGroupsError")} />;

@@ -142,6 +142,7 @@ router.post(
   async (req: Request, res: Response) => {
     try {
       const { emails } = req.body;
+      console.log(emails);
 
       if (!emails || !Array.isArray(emails)) {
         res.status(400).json({ message: "Invalid emails array" });
